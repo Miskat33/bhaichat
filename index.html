@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="bn"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ভাই চ্যাট</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#075e54">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ভাই চ্যাট">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
-.v{display:none;flex-direction:column;height:100%;max-width:700px;margin:auto;background:#fff}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:sans-serif;background:#075e54;overscroll-behavior:none}
+.v{display:none;flex-direction:column;height:100%;height:100dvh;max-width:700px;margin:auto;background:#fff}
 .top{background:#075e54;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
-.top h2{flex:1;font-size:18px}
+.top h2{flex:1;font-size:18px;min-width:0}
 .top small{display:block;font-size:12px;font-weight:normal;opacity:.85}
 .ib{background:none;border:none;color:#fff;font-size:22px;padding:4px 8px}
 #auth{background:#075e54;align-items:center;justify-content:center;gap:12px;padding:20px}
@@ -16,10 +23,13 @@ html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
 #auth button,.mb{width:100%;max-width:320px;padding:14px;border-radius:10px;border:none;background:#25d366;font-size:18px;font-weight:bold}
 #auth .alt{background:transparent;color:#fff;border:1px solid #fff;font-weight:normal;font-size:16px}
 #err{color:#ffd;font-size:14px;min-height:18px;text-align:center}
-#who{font-size:12px;padding:6px 14px;background:#e7f5f2;color:#075e54}
+#who{font-size:12px;padding:6px 14px;background:#e7f5f2;color:#075e54;display:flex;justify-content:space-between}
+#net{color:#c0392b;font-weight:bold}
 #list{flex:1;overflow-y:auto}
 .it{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid #eee;align-items:center}
+.it:active{background:#f1f1f1}
 .av{width:46px;height:46px;border-radius:50%;background:#128c7e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;flex-shrink:0}
+.av.g{background:#5b6abf}
 .it .m{flex:1;min-width:0}
 .it .nn{font-weight:bold;font-size:16px}
 .it .ll{font-size:14px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -29,16 +39,26 @@ html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
 .b{max-width:80%;padding:8px 12px;border-radius:14px;font-size:16px;line-height:1.35;word-wrap:break-word;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.15)}
 .me{align-self:flex-end;background:#dcf8c6;border-bottom-right-radius:3px}
 .ot{align-self:flex-start;background:#fff;border-bottom-left-radius:3px}
+.sn{font-size:12px;font-weight:bold;color:#128c7e;margin-bottom:2px}
 .t{font-size:11px;color:#777;text-align:right;margin-top:3px}
-#bar{display:flex;gap:8px;padding:8px;background:#f0f0f0}
+.vo{display:flex;align-items:center;gap:8px;min-width:200px}
+.vo button{width:38px;height:38px;border-radius:50%;border:none;background:#128c7e;color:#fff;font-size:16px;flex-shrink:0}
+.vb{flex:1;height:5px;background:#bbb;border-radius:3px;overflow:hidden}
+.vb div{height:100%;width:0;background:#128c7e}
+.vo span{font-size:12px;color:#555;min-width:34px}
+#bar,#recbar{display:flex;gap:8px;padding:8px;background:#f0f0f0;align-items:center}
+#recbar{display:none}
 #in{flex:1;border:none;border-radius:22px;padding:12px 16px;font-size:16px;outline:none;resize:none;max-height:110px}
-#go{width:48px;height:48px;border:none;border-radius:50%;background:#128c7e;color:#fff;font-size:22px}
+#go,#rsend{width:48px;height:48px;border:none;border-radius:50%;background:#128c7e;color:#fff;font-size:22px;flex-shrink:0}
+#rcancel{width:48px;height:48px;border:none;border-radius:50%;background:#e74c3c;color:#fff;font-size:20px;flex-shrink:0}
+#rtxt{flex:1;font-size:17px;color:#c0392b;font-weight:bold}
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;z-index:9}
-.mc{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:340px;display:none;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.mc{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:340px;max-height:90%;overflow-y:auto;display:none;flex-direction:column;gap:12px;align-items:center;text-align:center}
 .mc h3{font-size:18px}
 #qrbox img{width:230px;height:230px}
 #vid{width:100%;border-radius:10px;background:#000}
 .gray{background:#eee!important}
+.mem{width:100%;text-align:left;padding:6px 4px;border-bottom:1px solid #eee;font-size:15px}
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;display:none;z-index:99}
 </style></head><body>
 
@@ -54,14 +74,15 @@ html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
 
 <div id="home" class="v">
 <div class="top"><h2>💬 ভাই চ্যাট</h2><button class="ib" id="bqr">▦</button><button class="ib" id="badd">＋</button><button class="ib" id="bout">⏻</button></div>
-<div id="who"></div>
+<div id="who"><span id="wt"></span><span id="net"></span></div>
 <div id="list"></div>
 </div>
 
 <div id="chat" class="v">
-<div class="top"><button class="ib" id="bback">←</button><h2><span id="ct"></span><small id="cs"></small></h2></div>
+<div class="top"><button class="ib" id="bback">←</button><h2><span id="ct"></span><small id="cs"></small></h2><button class="ib" id="binfo" style="display:none">ⓘ</button></div>
 <div id="msgs"></div>
-<div id="bar"><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন..."></textarea><button id="go">➤</button></div>
+<div id="bar"><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন..."></textarea><button id="go">🎤</button></div>
+<div id="recbar"><button id="rcancel">✕</button><div id="rtxt">🔴 রেকর্ড হচ্ছে 0:00</div><button id="rsend">➤</button></div>
 </div>
 
 <div id="modal">
@@ -69,12 +90,22 @@ html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
 <input class="mi" id="aid" placeholder="বন্ধুর আইডি লিখুন" autocapitalize="none">
 <button class="mb" id="aok">অ্যাড করুন</button>
 <button class="mb gray" id="ascan">📷 QR স্ক্যান করুন</button>
+<button class="mb gray" id="agrp">👥 নতুন গ্রুপ খুলুন</button>
 <button class="mb gray" id="aclose1">বন্ধ</button></div>
 <div class="mc" id="mQR"><h3>আমার QR কোড</h3><div id="qrbox"></div><div id="myid" style="font-size:18px;font-weight:bold"></div>
 <div style="font-size:13px;color:#666">বন্ধু এটা স্ক্যান করলেই অ্যাড হবে, বা আপনার আইডি লিখে খুঁজতে পারবে</div>
 <button class="mb gray" id="aclose2">বন্ধ</button></div>
 <div class="mc" id="mScan"><h3>QR স্ক্যান করুন</h3><video id="vid" playsinline muted></video>
 <button class="mb gray" id="aclose3">বন্ধ</button></div>
+<div class="mc" id="mGroup"><h3>নতুন গ্রুপ</h3>
+<input class="mi" id="gname" placeholder="গ্রুপের নাম">
+<input class="mi" id="gids" placeholder="সদস্যদের আইডি, কমা দিয়ে (যেমন: rakib,sumon)" autocapitalize="none">
+<button class="mb" id="gok">গ্রুপ খুলুন</button>
+<button class="mb gray" id="aclose4">বন্ধ</button></div>
+<div class="mc" id="mInfo"><h3 id="itl">গ্রুপের সদস্য</h3><div id="mems" style="width:100%"></div>
+<input class="mi" id="minp" placeholder="নতুন সদস্যের আইডি" autocapitalize="none">
+<button class="mb" id="madd">সদস্য যোগ করুন</button>
+<button class="mb gray" id="aclose5">বন্ধ</button></div>
 </div>
 <div id="toast"></div>
 
@@ -83,7 +114,7 @@ html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,setDoc,getDoc,updateDoc,addDoc,collection,query,where,orderBy,onSnapshot,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,getDoc,updateDoc,addDoc,arrayUnion,collection,query,where,orderBy,onSnapshot,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const CONFIG = 
 {
@@ -95,9 +126,12 @@ const CONFIG =
   appId: "1:1039989161381:web:921377ee697c6482217c4c"
 }
 ;
-const app = initializeApp(CONFIG), auth = getAuth(app), db = getFirestore(app);
+const app = initializeApp(CONFIG), auth = getAuth(app);
+let db;
+try{db = initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){db = getFirestore(app)}
 const el = function(i){return document.getElementById(i)};
-let me=null, regBusy=false, unsubC=null, unsubM=null, cur=null, chatsData={}, stream=null, scanning=false;
+let me=null, regBusy=false, unsubC=null, unsubM=null, cur=null, curGrp=false, chatsData={}, stream=null, scanning=false;
+let rec=null, chunks=[], recStart=0, recTimer=null, recCancel=false, curAudio=null;
 
 function show(n){["auth","home","chat"].forEach(function(x){el(x).style.display = x===n ? "flex" : "none"})}
 function toast(t){var d=el("toast");d.textContent=t;d.style.display="block";setTimeout(function(){d.style.display="none"},2600)}
@@ -111,6 +145,7 @@ function fmt(ts){
   if(d.toDateString()!==new Date().toDateString())t=d.toLocaleDateString([],{day:"numeric",month:"short"});
   return t;
 }
+function dfmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+("0"+(s%60)).slice(-2)}
 function beep(){try{var c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=800;o.start();o.stop(c.currentTime+.12)}catch(e){}}
 function emsg(e){
   var c=e.code||"";
@@ -121,6 +156,8 @@ function emsg(e){
   if(c.indexOf("operation-not-allowed")>=0||c.indexOf("configuration-not-found")>=0)return "Firebase এ Email/Password চালু করা হয়নি";
   return "সমস্যা: "+c;
 }
+function netSt(){el("net").textContent=navigator.onLine?"":"অফলাইন"}
+window.addEventListener("online",netSt);window.addEventListener("offline",netSt);
 
 async function login(){
   var u=clean(el("un").value),p=el("pw").value;
@@ -145,7 +182,8 @@ async function start(u){
   try{var s=await getDoc(doc(db,"users",u.uid));if(s.exists())d=s.data()}catch(e){}
   var un=d.username||u.email.split("@")[0];
   me={uid:u.uid,username:un,name:d.name||un};
-  el("who").textContent=me.name+"  (আইডি: @"+me.username+")";
+  el("wt").textContent=me.name+"  (আইডি: @"+me.username+")";
+  netSt();
   show("home");
   if(unsubC)unsubC();
   unsubC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),function(s){
@@ -158,26 +196,28 @@ onAuthStateChanged(auth,function(u){
   else{me=null;if(unsubC)unsubC();if(unsubM)unsubM();show("auth")}
 });
 
-function other(c){
+function info(c){
+  if(c.isGroup)return {group:true,name:c.name||"গ্রুপ",sub:c.members.length+" জন সদস্য"};
   var id=c.members.find(function(x){return x!==me.uid});
   var i=(c.users&&c.users[id])||{username:"?",name:"?"};
-  return {uid:id,username:i.username,name:i.name};
+  return {group:false,name:i.name,sub:"@"+i.username};
 }
 function renderList(){
   var L=el("list");L.innerHTML="";
   var ids=Object.keys(chatsData).sort(function(a,b){return (chatsData[b].lastTs||0)-(chatsData[a].lastTs||0)});
   if(!ids.length){
     var e=document.createElement("div");e.id="empty";
-    e.textContent="এখনো কোনো চ্যাট নেই। উপরের ＋ চেপে বন্ধুর আইডি দিয়ে বা QR স্ক্যান করে অ্যাড করুন।";
+    e.textContent="এখনো কোনো চ্যাট নেই। উপরের ＋ চেপে বন্ধুর আইডি দিয়ে বা QR স্ক্যান করে অ্যাড করুন, অথবা নতুন গ্রুপ খুলুন।";
     L.appendChild(e);return;
   }
   ids.forEach(function(id){
-    var c=chatsData[id],o=other(c);
+    var c=chatsData[id],o=info(c);
     var it=document.createElement("div");it.className="it";
-    var av=document.createElement("div");av.className="av";av.textContent=(o.name||"?").charAt(0).toUpperCase();
+    var av=document.createElement("div");av.className="av"+(o.group?" g":"");av.textContent=o.group?"👥":(o.name||"?").charAt(0).toUpperCase();
     var m=document.createElement("div");m.className="m";
     var nn=document.createElement("div");nn.className="nn";nn.textContent=o.name;
-    var ll=document.createElement("div");ll.className="ll";ll.textContent=c.lastText?((c.lastFrom===me.uid?"আপনি: ":"")+c.lastText):"@"+o.username;
+    var pre=c.lastFrom===me.uid?"আপনি: ":((c.isGroup&&c.lastName)?c.lastName+": ":"");
+    var ll=document.createElement("div");ll.className="ll";ll.textContent=c.lastText?(pre+c.lastText):o.sub;
     m.appendChild(nn);m.appendChild(ll);
     var tt=document.createElement("div");tt.className="tt";tt.textContent=fmt(c.lastTs);
     it.appendChild(av);it.appendChild(m);it.appendChild(tt);
@@ -186,57 +226,202 @@ function renderList(){
   });
 }
 
+function voiceEl(m){
+  var w=document.createElement("div");w.className="vo";
+  var b=document.createElement("button");b.textContent="▶";
+  var bar=document.createElement("div");bar.className="vb";
+  var fill=document.createElement("div");bar.appendChild(fill);
+  var tl=document.createElement("span");tl.textContent=dfmt(m.dur||0);
+  var a=new Audio();a.preload="none";a.src=m.audio;
+  b.onclick=function(){
+    if(a.paused){
+      if(curAudio&&curAudio!==a)curAudio.pause();
+      curAudio=a;
+      var p=a.play();if(p&&p.catch)p.catch(function(){toast("ভয়েস চালানো যায়নি")});
+    }else a.pause();
+  };
+  a.onplay=function(){b.textContent="⏸"};
+  a.onpause=function(){b.textContent="▶"};
+  a.onended=function(){b.textContent="▶";fill.style.width="0";tl.textContent=dfmt(m.dur||0)};
+  a.ontimeupdate=function(){
+    var d=m.dur||a.duration||1;
+    fill.style.width=Math.min(100,a.currentTime/d*100)+"%";
+    tl.textContent=dfmt(a.currentTime);
+  };
+  w.appendChild(b);w.appendChild(bar);w.appendChild(tl);
+  return w;
+}
+function bubble(m,mine,grp){
+  var d=document.createElement("div");d.className="b "+(mine?"me":"ot");
+  if(grp&&!mine){var sn=document.createElement("div");sn.className="sn";sn.textContent=m.fn||"?";d.appendChild(sn)}
+  if(m.kind==="voice"&&m.audio){d.appendChild(voiceEl(m))}
+  else{var t1=document.createElement("div");t1.textContent=m.text;d.appendChild(t1)}
+  var t2=document.createElement("div");t2.className="t";t2.textContent=fmt(m.ts);d.appendChild(t2);
+  return d;
+}
+
 function openChat(cid,o){
-  cur=cid;
-  el("ct").textContent=o.name;el("cs").textContent="@"+o.username;
+  cur=cid;curGrp=!!o.group;
+  el("ct").textContent=o.name;el("cs").textContent=o.sub;
+  el("binfo").style.display=o.group?"block":"none";
   el("msgs").innerHTML="";show("chat");
+  history.pushState({chat:1},"");
+  resetBar();
   if(unsubM)unsubM();
   var first=true;
   unsubM=onSnapshot(query(collection(db,"chats",cid,"messages"),orderBy("ts")),function(s){
-    var L=el("msgs");L.innerHTML="";
-    s.forEach(function(x){
-      var m=x.data(),mine=m.from===me.uid;
-      var d=document.createElement("div");d.className="b "+(mine?"me":"ot");
-      var t1=document.createElement("div");t1.textContent=m.text;d.appendChild(t1);
-      var t2=document.createElement("div");t2.className="t";t2.textContent=fmt(m.ts);d.appendChild(t2);
-      L.appendChild(d);
+    var L=el("msgs");
+    s.docChanges().forEach(function(ch){
+      if(ch.type!=="added")return;
+      var m=ch.doc.data(),mine=m.from===me.uid;
+      L.insertBefore(bubble(m,mine,curGrp),L.children[ch.newIndex]||null);
+      if(!first&&!mine)beep();
     });
     L.scrollTop=L.scrollHeight;
-    if(!first){s.docChanges().forEach(function(ch){if(ch.type==="added"&&ch.doc.data().from!==me.uid)beep()})}
     first=false;
   },function(e){toast("মেসেজ লোড হচ্ছে না: "+e.code)});
 }
+function backHome(){
+  if(unsubM){unsubM();unsubM=null}
+  if(curAudio){curAudio.pause();curAudio=null}
+  if(rec&&rec.state!=="inactive")stopRec(true);
+  cur=null;if(me)show("home");
+}
+window.addEventListener("popstate",function(){if(cur)backHome()});
+
+async function touch(text,ts){
+  await updateDoc(doc(db,"chats",cur),{lastText:text,lastTs:ts,lastFrom:me.uid,lastName:me.name});
+}
 async function send(){
   var v=el("in").value.trim();if(!v||!cur)return;
-  el("in").value="";
+  el("in").value="";btnIcon();
   var ts=Date.now();
   try{
-    await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,text:v,ts:ts});
-    await updateDoc(doc(db,"chats",cur),{lastText:v,lastTs:ts,lastFrom:me.uid});
-  }catch(e){toast("পাঠানো যায়নি");el("in").value=v}
+    await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,fn:me.name,kind:"text",text:v,ts:ts});
+    await touch(v,ts);
+  }catch(e){toast("পাঠানো যায়নি");el("in").value=v;btnIcon()}
 }
 
+function btnIcon(){el("go").textContent=el("in").value.trim()?"➤":"🎤"}
+function resetBar(){el("bar").style.display="flex";el("recbar").style.display="none";el("in").value="";btnIcon()}
+async function startRec(){
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast("এই ব্রাউজারে ভয়েস রেকর্ড চলবে না");return}
+  try{
+    var st=await navigator.mediaDevices.getUserMedia({audio:true});
+    var types=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus"];
+    var mt="";for(var i=0;i<types.length;i++){if(MediaRecorder.isTypeSupported(types[i])){mt=types[i];break}}
+    var opt={audioBitsPerSecond:16000};if(mt)opt.mimeType=mt;
+    var r=new MediaRecorder(st,opt);rec=r;chunks=[];recCancel=false;
+    r.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+    r.onstop=function(){
+      st.getTracks().forEach(function(t){t.stop()});
+      clearInterval(recTimer);
+      el("recbar").style.display="none";el("bar").style.display="flex";
+      if(recCancel)return;
+      var dur=Math.round((Date.now()-recStart)/1000);
+      if(dur<1){toast("খুব ছোট হয়ে গেছে");return}
+      sendVoice(new Blob(chunks,{type:r.mimeType||mt||"audio/webm"}),dur);
+    };
+    r.start();recStart=Date.now();
+    el("bar").style.display="none";el("recbar").style.display="flex";
+    el("rtxt").textContent="🔴 রেকর্ড হচ্ছে 0:00";
+    recTimer=setInterval(function(){
+      var s=Math.floor((Date.now()-recStart)/1000);
+      el("rtxt").textContent="🔴 রেকর্ড হচ্ছে "+dfmt(s);
+      if(s>=60)stopRec(false);
+    },300);
+  }catch(e){toast("মাইক্রোফোনের অনুমতি দিন")}
+}
+function stopRec(cancel){recCancel=cancel;if(rec&&rec.state!=="inactive")rec.stop()}
+function sendVoice(blob,dur){
+  var chat=cur;
+  var fr=new FileReader();
+  fr.onload=async function(){
+    var data=fr.result;
+    if(data.length>900000){toast("ভয়েসটা অনেক বড়, ছোট করে বলুন");return}
+    var ts=Date.now();
+    try{
+      await addDoc(collection(db,"chats",chat,"messages"),{from:me.uid,fn:me.name,kind:"voice",audio:data,dur:dur,ts:ts});
+      await updateDoc(doc(db,"chats",chat),{lastText:"🎤 ভয়েস মেসেজ",lastTs:ts,lastFrom:me.uid,lastName:me.name});
+    }catch(e){toast("ভয়েস পাঠানো যায়নি")}
+  };
+  fr.readAsDataURL(blob);
+}
+
+async function findUser(u){
+  var qs=await getDocs(query(collection(db,"users"),where("username","==",u),limit(1)));
+  if(qs.empty)return null;
+  var o=qs.docs[0],d=o.data();
+  return {uid:o.id,username:d.username,name:d.name};
+}
 async function addUser(raw){
   var u=clean(raw);
   if(!u){toast("আইডি লিখুন");return}
   if(u===me.username){toast("এটা তো আপনার নিজের আইডি!");return}
   try{
-    var qs=await getDocs(query(collection(db,"users"),where("username","==",u),limit(1)));
-    if(qs.empty){toast("এই আইডি পাওয়া যায়নি");return}
-    var o=qs.docs[0],od=o.data();
-    var ids=[me.uid,o.id].sort(),cid=ids.join("_");
+    var o=await findUser(u);
+    if(!o){toast("এই আইডি পাওয়া যায়নি");return}
+    var ids=[me.uid,o.uid].sort(),cid=ids.join("_");
     var users={};
     users[me.uid]={username:me.username,name:me.name};
-    users[o.id]={username:od.username,name:od.name};
+    users[o.uid]={username:o.username,name:o.name};
     await setDoc(doc(db,"chats",cid),{members:ids,users:users},{merge:true});
     closeM();
-    openChat(cid,{uid:o.id,username:od.username,name:od.name});
+    openChat(cid,{group:false,name:o.name,sub:"@"+o.username});
   }catch(e){toast("অ্যাড করা যায়নি: "+(e.code||""))}
+}
+async function makeGroup(){
+  var gn=el("gname").value.trim();
+  var raw=el("gids").value.split(",").map(clean).filter(function(x){return x});
+  if(!gn){toast("গ্রুপের নাম দিন");return}
+  if(!raw.length){toast("কমপক্ষে একজনের আইডি দিন");return}
+  try{
+    var users={},members=[me.uid];
+    users[me.uid]={username:me.username,name:me.name};
+    for(var i=0;i<raw.length;i++){
+      if(raw[i]===me.username)continue;
+      var o=await findUser(raw[i]);
+      if(!o){toast("আইডি পাওয়া যায়নি: "+raw[i]);return}
+      if(members.indexOf(o.uid)<0){members.push(o.uid);users[o.uid]={username:o.username,name:o.name}}
+    }
+    if(members.length<2){toast("অন্তত একজন বন্ধু লাগবে");return}
+    var ts=Date.now();
+    var ref=await addDoc(collection(db,"chats"),{isGroup:true,name:gn,admin:me.uid,members:members,users:users,lastText:"গ্রুপ খোলা হয়েছে",lastTs:ts,lastFrom:me.uid,lastName:me.name});
+    closeM();
+    openChat(ref.id,{group:true,name:gn,sub:members.length+" জন সদস্য"});
+  }catch(e){toast("গ্রুপ খোলা যায়নি: "+(e.code||""))}
+}
+function showInfo(){
+  var c=chatsData[cur];if(!c)return;
+  el("itl").textContent=c.name||"গ্রুপ";
+  var M=el("mems");M.innerHTML="";
+  c.members.forEach(function(id){
+    var u=(c.users&&c.users[id])||{name:"?",username:"?"};
+    var d=document.createElement("div");d.className="mem";
+    d.textContent=u.name+" (@"+u.username+")"+(id===c.admin?" ⭐":"");
+    M.appendChild(d);
+  });
+  el("minp").value="";
+  openM("mInfo");
+}
+async function addMember(){
+  var c=chatsData[cur];if(!c)return;
+  var u=clean(el("minp").value);if(!u)return;
+  try{
+    var o=await findUser(u);
+    if(!o){toast("এই আইডি পাওয়া যায়নি");return}
+    if(c.members.indexOf(o.uid)>=0){toast("আগেই সদস্য আছেন");return}
+    var up={members:arrayUnion(o.uid)};
+    up["users."+o.uid]={username:o.username,name:o.name};
+    await updateDoc(doc(db,"chats",cur),up);
+    toast(o.name+" কে যোগ করা হয়েছে");
+    closeM();
+  }catch(e){toast("যোগ করা যায়নি: "+(e.code||""))}
 }
 
 function openM(id){
   el("modal").style.display="flex";
-  ["mAdd","mQR","mScan"].forEach(function(x){el(x).style.display=x===id?"flex":"none"});
+  ["mAdd","mQR","mScan","mGroup","mInfo"].forEach(function(x){el(x).style.display=x===id?"flex":"none"});
 }
 function stopScan(){scanning=false;if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}}
 function closeM(){stopScan();el("modal").style.display="none"}
@@ -274,8 +459,16 @@ el("badd").onclick=function(){el("aid").value="";openM("mAdd")};
 el("bqr").onclick=showQR;
 el("aok").onclick=function(){addUser(el("aid").value)};
 el("ascan").onclick=startScan;
-el("aclose1").onclick=closeM;el("aclose2").onclick=closeM;el("aclose3").onclick=closeM;
-el("bback").onclick=function(){if(unsubM){unsubM();unsubM=null}cur=null;show("home")};
-el("go").onclick=send;
+el("agrp").onclick=function(){el("gname").value="";el("gids").value="";openM("mGroup")};
+el("gok").onclick=makeGroup;
+el("binfo").onclick=showInfo;
+el("madd").onclick=addMember;
+["aclose1","aclose2","aclose3","aclose4","aclose5"].forEach(function(i){el(i).onclick=closeM});
+el("bback").onclick=function(){history.back()};
+el("go").onclick=function(){if(el("in").value.trim())send();else startRec()};
+el("rsend").onclick=function(){stopRec(false)};
+el("rcancel").onclick=function(){stopRec(true)};
+el("in").addEventListener("input",btnIcon);
 el("in").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"/bhaichat/"}).catch(function(){});
 </script></body></html>
