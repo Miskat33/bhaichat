@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ভাই চ্যাট</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:sans-serif;background:#e5ddd5}
+.v{display:none;flex-direction:column;height:100%;max-width:700px;margin:auto;background:#fff}
+.top{background:#075e54;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.top h2{flex:1;font-size:18px}
+.top small{display:block;font-size:12px;font-weight:normal;opacity:.85}
+.ib{background:none;border:none;color:#fff;font-size:22px;padding:4px 8px}
+#auth{background:#075e54;align-items:center;justify-content:center;gap:12px;padding:20px}
+#auth h1{color:#fff;font-size:28px;margin-bottom:6px}
+#auth input,.mi{width:100%;max-width:320px;padding:14px;border-radius:10px;border:none;font-size:17px;background:#fff;border:1px solid #ddd}
+#auth button,.mb{width:100%;max-width:320px;padding:14px;border-radius:10px;border:none;background:#25d366;font-size:18px;font-weight:bold}
+#auth .alt{background:transparent;color:#fff;border:1px solid #fff;font-weight:normal;font-size:16px}
+#err{color:#ffd;font-size:14px;min-height:18px;text-align:center}
+#who{font-size:12px;padding:6px 14px;background:#e7f5f2;color:#075e54}
+#list{flex:1;overflow-y:auto}
+.it{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid #eee;align-items:center}
+.av{width:46px;height:46px;border-radius:50%;background:#128c7e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;flex-shrink:0}
+.it .m{flex:1;min-width:0}
+.it .nn{font-weight:bold;font-size:16px}
+.it .ll{font-size:14px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .tt{font-size:11px;color:#999}
+#empty{padding:40px 20px;text-align:center;color:#777;line-height:1.6}
+#msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;background:#efe7de}
+.b{max-width:80%;padding:8px 12px;border-radius:14px;font-size:16px;line-height:1.35;word-wrap:break-word;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.15)}
+.me{align-self:flex-end;background:#dcf8c6;border-bottom-right-radius:3px}
+.ot{align-self:flex-start;background:#fff;border-bottom-left-radius:3px}
+.t{font-size:11px;color:#777;text-align:right;margin-top:3px}
+#bar{display:flex;gap:8px;padding:8px;background:#f0f0f0}
+#in{flex:1;border:none;border-radius:22px;padding:12px 16px;font-size:16px;outline:none;resize:none;max-height:110px}
+#go{width:48px;height:48px;border:none;border-radius:50%;background:#128c7e;color:#fff;font-size:22px}
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;z-index:9}
+.mc{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:340px;display:none;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.mc h3{font-size:18px}
+#qrbox img{width:230px;height:230px}
+#vid{width:100%;border-radius:10px;background:#000}
+.gray{background:#eee!important}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;display:none;z-index:99}
+</style></head><body>
+
+<div id="auth" class="v">
+<h1>💬 ভাই চ্যাট</h1>
+<input id="un" placeholder="আইডি (ইংরেজি ছোট অক্ষর/সংখ্যা)" autocapitalize="none" autocomplete="off">
+<input id="nm" placeholder="আপনার নাম (শুধু নতুন অ্যাকাউন্টে)">
+<input id="pw" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
+<button id="bl">লগইন</button>
+<button id="br" class="alt">নতুন অ্যাকাউন্ট খুলুন</button>
+<div id="err"></div>
+</div>
+
+<div id="home" class="v">
+<div class="top"><h2>💬 ভাই চ্যাট</h2><button class="ib" id="bqr">▦</button><button class="ib" id="badd">＋</button><button class="ib" id="bout">⏻</button></div>
+<div id="who"></div>
+<div id="list"></div>
+</div>
+
+<div id="chat" class="v">
+<div class="top"><button class="ib" id="bback">←</button><h2><span id="ct"></span><small id="cs"></small></h2></div>
+<div id="msgs"></div>
+<div id="bar"><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন..."></textarea><button id="go">➤</button></div>
+</div>
+
+<div id="modal">
+<div class="mc" id="mAdd"><h3>বন্ধুকে অ্যাড করুন</h3>
+<input class="mi" id="aid" placeholder="বন্ধুর আইডি লিখুন" autocapitalize="none">
+<button class="mb" id="aok">অ্যাড করুন</button>
+<button class="mb gray" id="ascan">📷 QR স্ক্যান করুন</button>
+<button class="mb gray" id="aclose1">বন্ধ</button></div>
+<div class="mc" id="mQR"><h3>আমার QR কোড</h3><div id="qrbox"></div><div id="myid" style="font-size:18px;font-weight:bold"></div>
+<div style="font-size:13px;color:#666">বন্ধু এটা স্ক্যান করলেই অ্যাড হবে, বা আপনার আইডি লিখে খুঁজতে পারবে</div>
+<button class="mb gray" id="aclose2">বন্ধ</button></div>
+<div class="mc" id="mScan"><h3>QR স্ক্যান করুন</h3><video id="vid" playsinline muted></video>
+<button class="mb gray" id="aclose3">বন্ধ</button></div>
+</div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,setDoc,getDoc,updateDoc,addDoc,collection,query,where,orderBy,onSnapshot,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const CONFIG = 
+{
+  apiKey: "AIzaSyAKQ52fQQpKV4ScAX7gMXFEGQAk3YKt1m0",
+  authDomain: "bhai-chat-76916.firebaseapp.com",
+  projectId: "bhai-chat-76916",
+  storageBucket: "bhai-chat-76916.firebasestorage.app",
+  messagingSenderId: "1039989161381",
+  appId: "1:1039989161381:web:921377ee697c6482217c4c"
+}
+;
+const app = initializeApp(CONFIG), auth = getAuth(app), db = getFirestore(app);
+const el = function(i){return document.getElementById(i)};
+let me=null, regBusy=false, unsubC=null, unsubM=null, cur=null, chatsData={}, stream=null, scanning=false;
+
+function show(n){["auth","home","chat"].forEach(function(x){el(x).style.display = x===n ? "flex" : "none"})}
+function toast(t){var d=el("toast");d.textContent=t;d.style.display="block";setTimeout(function(){d.style.display="none"},2600)}
+function err(t){el("err").textContent=t}
+function mail(u){return u+"@vaichat.app"}
+function clean(u){return u.trim().toLowerCase().replace(/^@/,"")}
+function okId(u){return /^[a-z0-9_]{3,20}$/.test(u)}
+function fmt(ts){
+  if(!ts)return "";
+  var d=new Date(ts),t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+  if(d.toDateString()!==new Date().toDateString())t=d.toLocaleDateString([],{day:"numeric",month:"short"});
+  return t;
+}
+function beep(){try{var c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=800;o.start();o.stop(c.currentTime+.12)}catch(e){}}
+function emsg(e){
+  var c=e.code||"";
+  if(c.indexOf("email-already")>=0)return "এই আইডি আগেই নেওয়া হয়েছে, অন্য আইডি দিন";
+  if(c.indexOf("invalid-credential")>=0||c.indexOf("wrong-password")>=0||c.indexOf("user-not-found")>=0)return "আইডি বা পাসওয়ার্ড ভুল";
+  if(c.indexOf("weak-password")>=0)return "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের দিন";
+  if(c.indexOf("network")>=0)return "ইন্টারনেট নেই";
+  if(c.indexOf("operation-not-allowed")>=0||c.indexOf("configuration-not-found")>=0)return "Firebase এ Email/Password চালু করা হয়নি";
+  return "সমস্যা: "+c;
+}
+
+async function login(){
+  var u=clean(el("un").value),p=el("pw").value;
+  if(!okId(u)){err("আইডি ৩ থেকে ২০ অক্ষরের হতে হবে (ইংরেজি ছোট অক্ষর, সংখ্যা বা _)");return}
+  err("");
+  try{await signInWithEmailAndPassword(auth,mail(u),p)}catch(e){err(emsg(e))}
+}
+async function register(){
+  var u=clean(el("un").value),p=el("pw").value,n=el("nm").value.trim();
+  if(!okId(u)){err("আইডি ৩ থেকে ২০ অক্ষরের হতে হবে (ইংরেজি ছোট অক্ষর, সংখ্যা বা _)");return}
+  if(!n){err("আপনার নাম লিখুন");return}
+  err("");regBusy=true;
+  try{
+    var c=await createUserWithEmailAndPassword(auth,mail(u),p);
+    await setDoc(doc(db,"users",c.user.uid),{username:u,name:n});
+    regBusy=false;await start(c.user);
+  }catch(e){regBusy=false;err(emsg(e))}
+}
+
+async function start(u){
+  var d={};
+  try{var s=await getDoc(doc(db,"users",u.uid));if(s.exists())d=s.data()}catch(e){}
+  var un=d.username||u.email.split("@")[0];
+  me={uid:u.uid,username:un,name:d.name||un};
+  el("who").textContent=me.name+"  (আইডি: @"+me.username+")";
+  show("home");
+  if(unsubC)unsubC();
+  unsubC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),function(s){
+    chatsData={};s.forEach(function(x){chatsData[x.id]=x.data()});renderList();
+  },function(e){toast("লোড হচ্ছে না: "+e.code)});
+}
+onAuthStateChanged(auth,function(u){
+  if(regBusy)return;
+  if(u)start(u);
+  else{me=null;if(unsubC)unsubC();if(unsubM)unsubM();show("auth")}
+});
+
+function other(c){
+  var id=c.members.find(function(x){return x!==me.uid});
+  var i=(c.users&&c.users[id])||{username:"?",name:"?"};
+  return {uid:id,username:i.username,name:i.name};
+}
+function renderList(){
+  var L=el("list");L.innerHTML="";
+  var ids=Object.keys(chatsData).sort(function(a,b){return (chatsData[b].lastTs||0)-(chatsData[a].lastTs||0)});
+  if(!ids.length){
+    var e=document.createElement("div");e.id="empty";
+    e.textContent="এখনো কোনো চ্যাট নেই। উপরের ＋ চেপে বন্ধুর আইডি দিয়ে বা QR স্ক্যান করে অ্যাড করুন।";
+    L.appendChild(e);return;
+  }
+  ids.forEach(function(id){
+    var c=chatsData[id],o=other(c);
+    var it=document.createElement("div");it.className="it";
+    var av=document.createElement("div");av.className="av";av.textContent=(o.name||"?").charAt(0).toUpperCase();
+    var m=document.createElement("div");m.className="m";
+    var nn=document.createElement("div");nn.className="nn";nn.textContent=o.name;
+    var ll=document.createElement("div");ll.className="ll";ll.textContent=c.lastText?((c.lastFrom===me.uid?"আপনি: ":"")+c.lastText):"@"+o.username;
+    m.appendChild(nn);m.appendChild(ll);
+    var tt=document.createElement("div");tt.className="tt";tt.textContent=fmt(c.lastTs);
+    it.appendChild(av);it.appendChild(m);it.appendChild(tt);
+    it.onclick=function(){openChat(id,o)};
+    L.appendChild(it);
+  });
+}
+
+function openChat(cid,o){
+  cur=cid;
+  el("ct").textContent=o.name;el("cs").textContent="@"+o.username;
+  el("msgs").innerHTML="";show("chat");
+  if(unsubM)unsubM();
+  var first=true;
+  unsubM=onSnapshot(query(collection(db,"chats",cid,"messages"),orderBy("ts")),function(s){
+    var L=el("msgs");L.innerHTML="";
+    s.forEach(function(x){
+      var m=x.data(),mine=m.from===me.uid;
+      var d=document.createElement("div");d.className="b "+(mine?"me":"ot");
+      var t1=document.createElement("div");t1.textContent=m.text;d.appendChild(t1);
+      var t2=document.createElement("div");t2.className="t";t2.textContent=fmt(m.ts);d.appendChild(t2);
+      L.appendChild(d);
+    });
+    L.scrollTop=L.scrollHeight;
+    if(!first){s.docChanges().forEach(function(ch){if(ch.type==="added"&&ch.doc.data().from!==me.uid)beep()})}
+    first=false;
+  },function(e){toast("মেসেজ লোড হচ্ছে না: "+e.code)});
+}
+async function send(){
+  var v=el("in").value.trim();if(!v||!cur)return;
+  el("in").value="";
+  var ts=Date.now();
+  try{
+    await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,text:v,ts:ts});
+    await updateDoc(doc(db,"chats",cur),{lastText:v,lastTs:ts,lastFrom:me.uid});
+  }catch(e){toast("পাঠানো যায়নি");el("in").value=v}
+}
+
+async function addUser(raw){
+  var u=clean(raw);
+  if(!u){toast("আইডি লিখুন");return}
+  if(u===me.username){toast("এটা তো আপনার নিজের আইডি!");return}
+  try{
+    var qs=await getDocs(query(collection(db,"users"),where("username","==",u),limit(1)));
+    if(qs.empty){toast("এই আইডি পাওয়া যায়নি");return}
+    var o=qs.docs[0],od=o.data();
+    var ids=[me.uid,o.id].sort(),cid=ids.join("_");
+    var users={};
+    users[me.uid]={username:me.username,name:me.name};
+    users[o.id]={username:od.username,name:od.name};
+    await setDoc(doc(db,"chats",cid),{members:ids,users:users},{merge:true});
+    closeM();
+    openChat(cid,{uid:o.id,username:od.username,name:od.name});
+  }catch(e){toast("অ্যাড করা যায়নি: "+(e.code||""))}
+}
+
+function openM(id){
+  el("modal").style.display="flex";
+  ["mAdd","mQR","mScan"].forEach(function(x){el(x).style.display=x===id?"flex":"none"});
+}
+function stopScan(){scanning=false;if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}}
+function closeM(){stopScan();el("modal").style.display="none"}
+function showQR(){
+  openM("mQR");
+  try{
+    var q=qrcode(0,"M");q.addData("vaichat:"+me.username);q.make();
+    el("qrbox").innerHTML=q.createImgTag(6,8);
+  }catch(e){el("qrbox").textContent="QR বানানো যায়নি"}
+  el("myid").textContent="@"+me.username;
+}
+async function startScan(){
+  openM("mScan");
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+    var v=el("vid");v.srcObject=stream;await v.play();scanning=true;
+    var cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
+    var tick=function(){
+      if(!scanning)return;
+      if(v.videoWidth){
+        cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);
+        var im=cx.getImageData(0,0,cv.width,cv.height);
+        var c=jsQR(im.data,im.width,im.height);
+        if(c&&c.data.indexOf("vaichat:")===0){closeM();addUser(c.data.slice(8));return}
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(e){toast("ক্যামেরা চালু করা যায়নি");closeM()}
+}
+
+el("bl").onclick=login;el("br").onclick=register;
+el("bout").onclick=function(){signOut(auth)};
+el("badd").onclick=function(){el("aid").value="";openM("mAdd")};
+el("bqr").onclick=showQR;
+el("aok").onclick=function(){addUser(el("aid").value)};
+el("ascan").onclick=startScan;
+el("aclose1").onclick=closeM;el("aclose2").onclick=closeM;el("aclose3").onclick=closeM;
+el("bback").onclick=function(){if(unsubM){unsubM();unsubM=null}cur=null;show("home")};
+el("go").onclick=send;
+el("in").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+</script></body></html>
