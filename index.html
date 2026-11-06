@@ -1,474 +1,277 @@
 <!DOCTYPE html>
-<html lang="bn"><head><meta charset="utf-8">
+<html lang="bn" data-th="a"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ভাই চ্যাট</title>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#075e54">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ভাই চ্যাট">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0a1929"><meta name="mobile-web-app-capable" content="yes">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;font-family:sans-serif;background:#075e54;overscroll-behavior:none}
-.v{display:none;flex-direction:column;height:100%;height:100dvh;max-width:700px;margin:auto;background:#fff}
-.top{background:#075e54;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
-.top h2{flex:1;font-size:18px;min-width:0}
-.top small{display:block;font-size:12px;font-weight:normal;opacity:.85}
-.ib{background:none;border:none;color:#fff;font-size:22px;padding:4px 8px}
-#auth{background:#075e54;align-items:center;justify-content:center;gap:12px;padding:20px}
-#auth h1{color:#fff;font-size:28px;margin-bottom:6px}
-#auth input,.mi{width:100%;max-width:320px;padding:14px;border-radius:10px;border:none;font-size:17px;background:#fff;border:1px solid #ddd}
-#auth button,.mb{width:100%;max-width:320px;padding:14px;border-radius:10px;border:none;background:#25d366;font-size:18px;font-weight:bold}
-#auth .alt{background:transparent;color:#fff;border:1px solid #fff;font-weight:normal;font-size:16px}
-#err{color:#ffd;font-size:14px;min-height:18px;text-align:center}
-#who{font-size:12px;padding:6px 14px;background:#e7f5f2;color:#075e54;display:flex;justify-content:space-between}
-#net{color:#c0392b;font-weight:bold}
-#list{flex:1;overflow-y:auto}
-.it{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid #eee;align-items:center}
-.it:active{background:#f1f1f1}
-.av{width:46px;height:46px;border-radius:50%;background:#128c7e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;flex-shrink:0}
-.av.g{background:#5b6abf}
-.it .m{flex:1;min-width:0}
-.it .nn{font-weight:bold;font-size:16px}
-.it .ll{font-size:14px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.it .tt{font-size:11px;color:#999}
-#empty{padding:40px 20px;text-align:center;color:#777;line-height:1.6}
-#msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;background:#efe7de}
-.b{max-width:80%;padding:8px 12px;border-radius:14px;font-size:16px;line-height:1.35;word-wrap:break-word;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.15)}
-.me{align-self:flex-end;background:#dcf8c6;border-bottom-right-radius:3px}
-.ot{align-self:flex-start;background:#fff;border-bottom-left-radius:3px}
-.sn{font-size:12px;font-weight:bold;color:#128c7e;margin-bottom:2px}
-.t{font-size:11px;color:#777;text-align:right;margin-top:3px}
-.vo{display:flex;align-items:center;gap:8px;min-width:200px}
-.vo button{width:38px;height:38px;border-radius:50%;border:none;background:#128c7e;color:#fff;font-size:16px;flex-shrink:0}
-.vb{flex:1;height:5px;background:#bbb;border-radius:3px;overflow:hidden}
-.vb div{height:100%;width:0;background:#128c7e}
-.vo span{font-size:12px;color:#555;min-width:34px}
-#bar,#recbar{display:flex;gap:8px;padding:8px;background:#f0f0f0;align-items:center}
-#recbar{display:none}
-#in{flex:1;border:none;border-radius:22px;padding:12px 16px;font-size:16px;outline:none;resize:none;max-height:110px}
-#go,#rsend{width:48px;height:48px;border:none;border-radius:50%;background:#128c7e;color:#fff;font-size:22px;flex-shrink:0}
-#rcancel{width:48px;height:48px;border:none;border-radius:50%;background:#e74c3c;color:#fff;font-size:20px;flex-shrink:0}
-#rtxt{flex:1;font-size:17px;color:#c0392b;font-weight:bold}
-#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;z-index:9}
-.mc{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:340px;max-height:90%;overflow-y:auto;display:none;flex-direction:column;gap:12px;align-items:center;text-align:center}
-.mc h3{font-size:18px}
-#qrbox img{width:230px;height:230px}
-#vid{width:100%;border-radius:10px;background:#000}
-.gray{background:#eee!important}
-.mem{width:100%;text-align:left;padding:6px 4px;border-bottom:1px solid #eee;font-size:15px}
-#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;display:none;z-index:99}
+:root,[data-th=a]{--h:#0a1929;--bg:#0b0f14;--cd:#111a24;--tx:#e8eef5;--sb:#8fa3b8;--p:#1e88e5;--me:#14508f;--ot:#1c2733;--ch:#8d5a3b;--bd:#1f2b38}
+[data-th=b]{--h:#3e2723;--bg:#1a110e;--cd:#241915;--tx:#f3e9e4;--sb:#b9a39a;--p:#bf8a64;--me:#6d4c41;--ot:#2e211c;--ch:#1e88e5;--bd:#38281f}
+[data-th=c]{--h:#0d47a1;--bg:#fff;--cd:#f6f8fa;--tx:#111;--sb:#667;--p:#1e88e5;--me:#d6e8ff;--ot:#eef0f3;--ch:#8d5a3b;--bd:#e3e7ec}
+html,body{height:100%;font-family:sans-serif;background:var(--bg);color:var(--tx);overscroll-behavior:none}
+button,input,textarea{font-family:inherit;color:inherit}
+.sc{position:fixed;inset:0;display:none;flex-direction:column;background:var(--bg);max-width:720px;margin:auto}
+.hd{background:var(--h);color:#fff;padding:14px;display:flex;align-items:center;gap:12px;font-size:19px}
+.hd b{flex:1}.hd small{font-size:12px;opacity:.8;display:block;font-weight:400}
+.ib{background:none;border:none;color:#fff;font-size:21px;padding:4px 8px}
+.tab{display:none;flex:1;overflow-y:auto}
+.sr{padding:8px 12px}.sr input{width:100%;padding:10px 14px;border-radius:22px;border:none;background:var(--cd);font-size:15px;outline:none}
+.it,.li{display:flex;gap:12px;padding:11px 14px;align-items:center;border-bottom:1px solid var(--bd)}
+.it:active,.li:active{background:var(--cd)}
+.av{border-radius:50%;object-fit:cover;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.m{flex:1;min-width:0}.r{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ll,.sb{color:var(--sb);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r small{font-size:11px;color:var(--sb)}.r small.un{color:var(--p)}
+.bg{background:var(--ch);color:#fff;border-radius:12px;padding:1px 7px;font-size:12px;font-weight:700}
+.em{padding:50px 24px;text-align:center;color:var(--sb);line-height:1.7}
+#fab{position:fixed;right:max(16px,calc(50% - 344px));bottom:78px;width:56px;height:56px;border-radius:16px;border:none;background:var(--ch);color:#fff;font-size:28px;box-shadow:0 3px 10px #0008;display:none}
+nav{display:flex;background:var(--h);margin-top:auto}
+nav button{flex:1;background:none;border:none;color:#fff9;padding:8px;font-size:20px;display:flex;flex-direction:column;align-items:center}
+nav button small{font-size:11px}nav button.on{color:#fff;box-shadow:inset 0 3px var(--p)}
+#msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:5px;background:var(--bg)}
+.b{max-width:80%;padding:7px 11px;border-radius:12px;font-size:16px;line-height:1.35;word-wrap:break-word;white-space:pre-wrap}
+.me{align-self:flex-end;background:var(--me);border-bottom-right-radius:3px}.ot{align-self:flex-start;background:var(--ot);border-bottom-left-radius:3px}
+.sn{font-size:12px;font-weight:700;color:var(--p);margin-bottom:2px}.t{font-size:11px;color:var(--sb);text-align:right;margin-top:2px}
+.tk.sn{color:#4fc3f7;font-size:11px;margin:0}
+.vo{display:flex;align-items:center;gap:8px;min-width:150px}.vo button{width:36px;height:36px;border-radius:50%;border:none;background:var(--ch);color:#fff}
+#bar,#rb{display:flex;gap:8px;padding:8px;background:var(--bg);align-items:center}#rb{display:none}
+#in{flex:1;border:none;border-radius:22px;padding:12px 16px;font-size:16px;outline:none;resize:none;max-height:100px;background:var(--cd)}
+.cb{width:48px;height:48px;border:none;border-radius:50%;background:var(--p);color:#fff;font-size:21px;flex-shrink:0}
+#rt{flex:1;color:#ef5350;font-weight:700}
+.mdl{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+.mc{background:var(--cd);color:var(--tx);border-radius:16px;padding:18px;width:100%;max-width:340px;max-height:90%;overflow-y:auto;display:flex;flex-direction:column;gap:11px;align-items:center;text-align:center}
+.mc input,.fi{width:100%;padding:13px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);font-size:16px}
+.bt{width:100%;padding:13px;border-radius:10px;border:none;background:var(--p);color:#fff;font-size:17px;font-weight:700}
+.bt.g{background:var(--ot)}.bt.rd{background:#c62828}
+#auth{align-items:center;justify-content:center;gap:12px;padding:22px;background:linear-gradient(#0a1929,#000)}
+#auth .fi,#auth .bt{max-width:330px}#auth h1{color:#fff}#auth .ln{color:#90caf9;font-size:15px}#er{color:#ffab91;min-height:18px;font-size:14px;text-align:center}
+.pb{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px;overflow-y:auto}
+.row{display:flex;gap:12px;justify-content:center;width:100%}.ro{flex:1;max-width:110px;background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:12px;font-size:22px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--p)}.ro small{font-size:12px}
+.st{padding:14px 14px 4px;color:var(--p);font-size:13px;font-weight:700}
+#call{background:#05090d;color:#fff;z-index:30;align-items:center;justify-content:center}
+#rv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+#lv{position:absolute;right:12px;top:12px;width:100px;height:140px;object-fit:cover;border-radius:12px;background:#222;z-index:2}
+#ci{position:relative;z-index:2;text-align:center;margin-bottom:auto;margin-top:60px;text-shadow:0 1px 6px #000}#ci h2{margin:12px 0 4px}
+#cb{position:relative;z-index:2;display:flex;gap:22px;margin-bottom:50px}#cb button{width:62px;height:62px;border-radius:50%;border:none;font-size:26px;background:#ffffff33;color:#fff}
+#cb .rd{background:#e53935}#cb .gr{background:#2e7d32}
+#lock{z-index:40;background:#111;color:#fff;justify-content:flex-end;padding:10px}#ld{font-size:56px;text-align:right;padding:20px;min-height:110px;overflow:hidden}
+#lk{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-bottom:16px}#lk button{height:68px;border-radius:50%;border:none;background:#333;color:#fff;font-size:24px}#lk button.o{background:#ff9f0a}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;display:none;z-index:99;max-width:90%}
+#net{font-size:12px;color:#ffab91}
 </style></head><body>
 
-<div id="auth" class="v">
+<div id="auth" class="sc">
 <h1>💬 ভাই চ্যাট</h1>
-<input id="un" placeholder="আইডি (ইংরেজি ছোট অক্ষর/সংখ্যা)" autocapitalize="none" autocomplete="off">
-<input id="nm" placeholder="আপনার নাম (শুধু নতুন অ্যাকাউন্টে)">
-<input id="pw" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
-<button id="bl">লগইন</button>
-<button id="br" class="alt">নতুন অ্যাকাউন্ট খুলুন</button>
-<div id="err"></div>
-</div>
+<div id="f1" style="display:contents">
+<input class="fi" id="li" placeholder="আইডি" autocapitalize="none"><input class="fi" id="lp" type="password" placeholder="পাসওয়ার্ড">
+<button class="bt" onclick="A.login()">লগইন</button><div class="ln" onclick="A.sw(1)">নতুন অ্যাকাউন্ট খুলুন</div></div>
+<div id="f2" style="display:none;flex-direction:column;gap:12px;width:100%;align-items:center">
+<input class="fi" id="sn" placeholder="আপনার নাম"><input class="fi" id="si" placeholder="আইডি (ইংরেজি ছোট অক্ষর/সংখ্যা)" autocapitalize="none"><input class="fi" id="sp" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬)">
+<button class="bt" onclick="A.reg()">অ্যাকাউন্ট খুলুন</button><div class="ln" onclick="A.sw(0)">আগে থেকেই অ্যাকাউন্ট আছে? লগইন</div></div>
+<div id="er"></div></div>
 
-<div id="home" class="v">
-<div class="top"><h2>💬 ভাই চ্যাট</h2><button class="ib" id="bqr">▦</button><button class="ib" id="badd">＋</button><button class="ib" id="bout">⏻</button></div>
-<div id="who"><span id="wt"></span><span id="net"></span></div>
-<div id="list"></div>
-</div>
+<div id="main" class="sc">
+<div class="hd"><b>ভাই চ্যাট</b><span id="net"></span></div>
+<div id="tc" class="tab"><div class="sr"><input id="q" placeholder="🔍 চ্যাট খুঁজুন"></div><div id="list"></div></div>
+<div id="tl" class="tab"><div id="cl"></div></div><div id="ts" class="tab"></div>
+<button id="fab" onclick="A.add()">＋</button>
+<nav><button data-t="tc">💬<small>চ্যাট</small></button><button data-t="tl">📞<small>কল</small></button><button data-t="ts">⚙️<small>সেটিংস</small></button></nav></div>
 
-<div id="chat" class="v">
-<div class="top"><button class="ib" id="bback">←</button><h2><span id="ct"></span><small id="cs"></small></h2><button class="ib" id="binfo" style="display:none">ⓘ</button></div>
+<div id="chat" class="sc">
+<div class="hd"><button class="ib" onclick="history.back()">←</button><div id="cav" onclick="A.ch()"></div><b onclick="A.ch()"><span id="ct"></span><small id="cs"></small></b><button class="ib" id="c1" onclick="A.cc(0)">📞</button><button class="ib" id="c2" onclick="A.cc(1)">🎥</button></div>
 <div id="msgs"></div>
-<div id="bar"><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন..."></textarea><button id="go">🎤</button></div>
-<div id="recbar"><button id="rcancel">✕</button><div id="rtxt">🔴 রেকর্ড হচ্ছে 0:00</div><button id="rsend">➤</button></div>
-</div>
+<div id="bar"><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন"></textarea><button class="cb" id="go">🎤</button></div>
+<div id="rb"><button class="cb" style="background:#c62828" onclick="A.rs(1)">✕</button><div id="rt"></div><button class="cb" onclick="A.rs(0)">➤</button></div></div>
 
-<div id="modal">
-<div class="mc" id="mAdd"><h3>বন্ধুকে অ্যাড করুন</h3>
-<input class="mi" id="aid" placeholder="বন্ধুর আইডি লিখুন" autocapitalize="none">
-<button class="mb" id="aok">অ্যাড করুন</button>
-<button class="mb gray" id="ascan">📷 QR স্ক্যান করুন</button>
-<button class="mb gray" id="agrp">👥 নতুন গ্রুপ খুলুন</button>
-<button class="mb gray" id="aclose1">বন্ধ</button></div>
-<div class="mc" id="mQR"><h3>আমার QR কোড</h3><div id="qrbox"></div><div id="myid" style="font-size:18px;font-weight:bold"></div>
-<div style="font-size:13px;color:#666">বন্ধু এটা স্ক্যান করলেই অ্যাড হবে, বা আপনার আইডি লিখে খুঁজতে পারবে</div>
-<button class="mb gray" id="aclose2">বন্ধ</button></div>
-<div class="mc" id="mScan"><h3>QR স্ক্যান করুন</h3><video id="vid" playsinline muted></video>
-<button class="mb gray" id="aclose3">বন্ধ</button></div>
-<div class="mc" id="mGroup"><h3>নতুন গ্রুপ</h3>
-<input class="mi" id="gname" placeholder="গ্রুপের নাম">
-<input class="mi" id="gids" placeholder="সদস্যদের আইডি, কমা দিয়ে (যেমন: rakib,sumon)" autocapitalize="none">
-<button class="mb" id="gok">গ্রুপ খুলুন</button>
-<button class="mb gray" id="aclose4">বন্ধ</button></div>
-<div class="mc" id="mInfo"><h3 id="itl">গ্রুপের সদস্য</h3><div id="mems" style="width:100%"></div>
-<input class="mi" id="minp" placeholder="নতুন সদস্যের আইডি" autocapitalize="none">
-<button class="mb" id="madd">সদস্য যোগ করুন</button>
-<button class="mb gray" id="aclose5">বন্ধ</button></div>
-</div>
-<div id="toast"></div>
+<div id="pg" class="sc"></div>
+<div id="md" class="mdl"></div>
+<div id="call" class="sc"><video id="rv" autoplay playsinline></video><video id="lv" autoplay playsinline muted></video><div id="ci"><div id="cia"></div><h2 id="cn"></h2><div id="cst"></div></div><div id="cb"></div></div>
+<div id="lock" class="sc"><div id="ld">0</div><div id="lk"></div></div>
+<input type="file" id="fi" accept="image/*" hidden><div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,getDoc,updateDoc,addDoc,arrayUnion,collection,query,where,orderBy,onSnapshot,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,getDoc,updateDoc,addDoc,arrayUnion,increment,deleteField,collection,query,where,orderBy,onSnapshot,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const CONFIG = 
-{
-  apiKey: "AIzaSyAKQ52fQQpKV4ScAX7gMXFEGQAk3YKt1m0",
-  authDomain: "bhai-chat-76916.firebaseapp.com",
-  projectId: "bhai-chat-76916",
-  storageBucket: "bhai-chat-76916.firebasestorage.app",
-  messagingSenderId: "1039989161381",
-  appId: "1:1039989161381:web:921377ee697c6482217c4c"
-}
-;
-const app = initializeApp(CONFIG), auth = getAuth(app);
-let db;
-try{db = initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){db = getFirestore(app)}
-const el = function(i){return document.getElementById(i)};
-let me=null, regBusy=false, unsubC=null, unsubM=null, cur=null, curGrp=false, chatsData={}, stream=null, scanning=false;
-let rec=null, chunks=[], recStart=0, recTimer=null, recCancel=false, curAudio=null;
+const CFG={apiKey:"AIzaSyAKQ52fQQpKV4ScAX7gMXFEGQAk3YKt1m0",authDomain:"bhai-chat-76916.firebaseapp.com",projectId:"bhai-chat-76916",storageBucket:"bhai-chat-76916.firebasestorage.app",messagingSenderId:"1039989161381",appId:"1:1039989161381:web:921377ee697c6482217c4c"};
+const app=initializeApp(CFG),auth=getAuth(app);let db;
+try{db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){db=getFirestore(app)}
+const $=i=>document.getElementById(i),A={};window.A=A;
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const COL=["#1e88e5","#8d5a3b","#00897b","#5e35b1","#c2185b","#f57c00"];
+let me=null,U={},chats={},cur=null,reg=false,unC=null,unM=null,uw={},CALLS={},AD={},call=null,stream=null,scanning=false;
+const ICE={iceServers:[{urls:["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"]}]};
 
-function show(n){["auth","home","chat"].forEach(function(x){el(x).style.display = x===n ? "flex" : "none"})}
-function toast(t){var d=el("toast");d.textContent=t;d.style.display="block";setTimeout(function(){d.style.display="none"},2600)}
-function err(t){el("err").textContent=t}
-function mail(u){return u+"@vaichat.app"}
-function clean(u){return u.trim().toLowerCase().replace(/^@/,"")}
-function okId(u){return /^[a-z0-9_]{3,20}$/.test(u)}
-function fmt(ts){
-  if(!ts)return "";
-  var d=new Date(ts),t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
-  if(d.toDateString()!==new Date().toDateString())t=d.toLocaleDateString([],{day:"numeric",month:"short"});
-  return t;
-}
-function dfmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+("0"+(s%60)).slice(-2)}
-function beep(){try{var c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=800;o.start();o.stop(c.currentTime+.12)}catch(e){}}
-function emsg(e){
-  var c=e.code||"";
-  if(c.indexOf("email-already")>=0)return "এই আইডি আগেই নেওয়া হয়েছে, অন্য আইডি দিন";
-  if(c.indexOf("invalid-credential")>=0||c.indexOf("wrong-password")>=0||c.indexOf("user-not-found")>=0)return "আইডি বা পাসওয়ার্ড ভুল";
-  if(c.indexOf("weak-password")>=0)return "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের দিন";
-  if(c.indexOf("network")>=0)return "ইন্টারনেট নেই";
-  if(c.indexOf("operation-not-allowed")>=0||c.indexOf("configuration-not-found")>=0)return "Firebase এ Email/Password চালু করা হয়নি";
-  return "সমস্যা: "+c;
-}
-function netSt(){el("net").textContent=navigator.onLine?"":"অফলাইন"}
-window.addEventListener("online",netSt);window.addEventListener("offline",netSt);
+const toast=t=>{const d=$("toast");d.textContent=t;d.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>d.style.display="none",2600)};
+const show=n=>["auth","main","chat"].forEach(x=>$(x).style.display=x==n?"flex":"none");
+const df=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+("0"+s%60).slice(-2)};
+const fmt=ts=>{if(!ts)return"";const d=new Date(ts);return d.toDateString()==new Date().toDateString()?d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString([],{day:"numeric",month:"short"})};
+const beep=(f=800)=>{try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=f;o.start();o.stop(c.currentTime+.15)}catch(e){}};
+function av(p,n,sz=46,g){const s=`width:${sz}px;height:${sz}px;font-size:${sz*.45}px`;if(p)return`<img class=av style="${s}" src="${p}">`;return`<div class=av style="${s};background:${g?"#5e35b1":COL[(n||"?").charCodeAt(0)%6]}">${g?"👥":esc((n||"?")[0].toUpperCase())}</div>`}
+const emsg=e=>{const c=e.code||"";return c.includes("email-already")?"এই আইডি আগেই নেওয়া হয়েছে":c.includes("invalid-credential")||c.includes("wrong-password")||c.includes("user-not-found")?"আইডি বা পাসওয়ার্ড ভুল":c.includes("weak")?"পাসওয়ার্ড কমপক্ষে ৬ অক্ষর":c.includes("network")?"ইন্টারনেট নেই":c.includes("operation-not")?"Firebase এ Email/Password চালু করুন":c.includes("unauthorized-domain")?"Firebase এ এই ডোমেইন Authorized করুন":"সমস্যা: "+c};
+const okId=u=>/^[a-z0-9_]{3,20}$/.test(u),cl=u=>u.trim().toLowerCase().replace(/^@/,"");
+document.documentElement.dataset.th=localStorage.th||"a";
 
-async function login(){
-  var u=clean(el("un").value),p=el("pw").value;
-  if(!okId(u)){err("আইডি ৩ থেকে ২০ অক্ষরের হতে হবে (ইংরেজি ছোট অক্ষর, সংখ্যা বা _)");return}
-  err("");
-  try{await signInWithEmailAndPassword(auth,mail(u),p)}catch(e){err(emsg(e))}
-}
-async function register(){
-  var u=clean(el("un").value),p=el("pw").value,n=el("nm").value.trim();
-  if(!okId(u)){err("আইডি ৩ থেকে ২০ অক্ষরের হতে হবে (ইংরেজি ছোট অক্ষর, সংখ্যা বা _)");return}
-  if(!n){err("আপনার নাম লিখুন");return}
-  err("");regBusy=true;
-  try{
-    var c=await createUserWithEmailAndPassword(auth,mail(u),p);
-    await setDoc(doc(db,"users",c.user.uid),{username:u,name:n});
-    regBusy=false;await start(c.user);
-  }catch(e){regBusy=false;err(emsg(e))}
-}
+// ---------- লগইন ----------
+A.sw=n=>{$("f1").style.display=n?"none":"contents";$("f2").style.display=n?"flex":"none";$("er").textContent=""};
+A.login=async()=>{const u=cl($("li").value);if(!okId(u))return $("er").textContent="সঠিক আইডি দিন";try{await signInWithEmailAndPassword(auth,u+"@vaichat.app",$("lp").value)}catch(e){$("er").textContent=emsg(e)}};
+A.reg=async()=>{const u=cl($("si").value),n=$("sn").value.trim();if(!n)return $("er").textContent="নাম লিখুন";if(!okId(u))return $("er").textContent="আইডি ৩-২০ অক্ষর (ইংরেজি ছোট অক্ষর, সংখ্যা, _)";reg=true;
+ try{const c=await createUserWithEmailAndPassword(auth,u+"@vaichat.app",$("sp").value);await setDoc(doc(db,"users",c.user.uid),{username:u,name:n,about:"হ্যালো! আমি ভাই চ্যাট ব্যবহার করছি"});reg=false;boot(c.user)}catch(e){reg=false;$("er").textContent=emsg(e)}};
+A.out=()=>{if(confirm("লগআউট করবেন?"))signOut(auth)};
+onAuthStateChanged(auth,u=>{if(reg)return;if(u)boot(u);else{me=null;[unC,unM].forEach(f=>f&&f());show("auth")}});
 
-async function start(u){
-  var d={};
-  try{var s=await getDoc(doc(db,"users",u.uid));if(s.exists())d=s.data()}catch(e){}
-  var un=d.username||u.email.split("@")[0];
-  me={uid:u.uid,username:un,name:d.name||un};
-  el("wt").textContent=me.name+"  (আইডি: @"+me.username+")";
-  netSt();
-  show("home");
-  if(unsubC)unsubC();
-  unsubC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),function(s){
-    chatsData={};s.forEach(function(x){chatsData[x.id]=x.data()});renderList();
-  },function(e){toast("লোড হচ্ছে না: "+e.code)});
+function watchU(uid){if(uw[uid])return;uw[uid]=onSnapshot(doc(db,"users",uid),s=>{if(s.exists()){U[uid]={uid,...s.data()};if(me&&uid==me.uid){me=U[uid];rs()}ui()}})}
+function ui(){rl();rc();if(cur)hdr()}
+async function boot(u){
+ me={uid:u.uid,username:u.email.split("@")[0],name:u.email.split("@")[0]};U[u.uid]=me;watchU(u.uid);
+ show("main");tabTo("tc");rs();
+ unC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),s=>{chats={};s.forEach(x=>chats[x.id]=x.data());Object.values(chats).forEach(c=>{if(!c.isGroup)watchU(c.members.find(x=>x!==me.uid))});rl();if(cur){hdr();tk()}},e=>toast("লোড হচ্ছে না: "+e.code));
+ ["caller","callee"].forEach(f=>onSnapshot(query(collection(db,"calls"),where(f,"==",me.uid)),s=>{
+  s.docChanges().forEach(ch=>{const d=ch.doc.data(),id=ch.doc.id;CALLS[id]=d;const o=d.caller==me.uid?d.callee:d.caller;watchU(o);
+   if(f=="callee"){if(ch.type=="added"&&d.status=="ringing"&&Date.now()-d.ts<60000&&!call)incoming(id,d);
+    if(call&&call.id==id&&call.state=="inring"&&d.status!="ringing"){stop("মিসড কল")}}});rc()}));
+ if(localStorage.pin)lockNow();
 }
-onAuthStateChanged(auth,function(u){
-  if(regBusy)return;
-  if(u)start(u);
-  else{me=null;if(unsubC)unsubC();if(unsubM)unsubM();show("auth")}
-});
+window.addEventListener("online",()=>$("net").textContent="");window.addEventListener("offline",()=>$("net").textContent="অফলাইন");
 
-function info(c){
-  if(c.isGroup)return {group:true,name:c.name||"গ্রুপ",sub:c.members.length+" জন সদস্য"};
-  var id=c.members.find(function(x){return x!==me.uid});
-  var i=(c.users&&c.users[id])||{username:"?",name:"?"};
-  return {group:false,name:i.name,sub:"@"+i.username};
-}
-function renderList(){
-  var L=el("list");L.innerHTML="";
-  var ids=Object.keys(chatsData).sort(function(a,b){return (chatsData[b].lastTs||0)-(chatsData[a].lastTs||0)});
-  if(!ids.length){
-    var e=document.createElement("div");e.id="empty";
-    e.textContent="এখনো কোনো চ্যাট নেই। উপরের ＋ চেপে বন্ধুর আইডি দিয়ে বা QR স্ক্যান করে অ্যাড করুন, অথবা নতুন গ্রুপ খুলুন।";
-    L.appendChild(e);return;
-  }
-  ids.forEach(function(id){
-    var c=chatsData[id],o=info(c);
-    var it=document.createElement("div");it.className="it";
-    var av=document.createElement("div");av.className="av"+(o.group?" g":"");av.textContent=o.group?"👥":(o.name||"?").charAt(0).toUpperCase();
-    var m=document.createElement("div");m.className="m";
-    var nn=document.createElement("div");nn.className="nn";nn.textContent=o.name;
-    var pre=c.lastFrom===me.uid?"আপনি: ":((c.isGroup&&c.lastName)?c.lastName+": ":"");
-    var ll=document.createElement("div");ll.className="ll";ll.textContent=c.lastText?(pre+c.lastText):o.sub;
-    m.appendChild(nn);m.appendChild(ll);
-    var tt=document.createElement("div");tt.className="tt";tt.textContent=fmt(c.lastTs);
-    it.appendChild(av);it.appendChild(m);it.appendChild(tt);
-    it.onclick=function(){openChat(id,o)};
-    L.appendChild(it);
-  });
-}
+// ---------- ট্যাব ----------
+function tabTo(t){["tc","tl","ts"].forEach(x=>$(x).style.display=x==t?"block":"none");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("fab").style.display=t=="tc"?"block":"none"}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tabTo(b.dataset.t));
+$("q").oninput=rl;
+const ci=c=>{if(c.isGroup)return{g:1,n:c.name,p:null,s:c.members.length+" জন সদস্য"};const o=c.members.find(x=>x!==me.uid),u=U[o]||(c.users&&c.users[o])||{};return{g:0,o,n:u.name||"?",p:u.photo,s:"@"+(u.username||"")}};
+function rl(){if(!me)return;const q=($("q").value||"").trim().toLowerCase();
+ const ids=Object.keys(chats).filter(id=>!q||ci(chats[id]).n.toLowerCase().includes(q)).sort((a,b)=>(chats[b].lastTs||0)-(chats[a].lastTs||0));
+ $("list").innerHTML=ids.length?ids.map(id=>{const c=chats[id],i=ci(c),n=c.unread&&c.unread[me.uid]||0,pre=c.lastFrom==me.uid?"আপনি: ":(c.isGroup&&c.lastName?c.lastName+": ":"");
+  return`<div class=it onclick="A.oc('${id}')">${av(i.p,i.n,52,i.g)}<div class=m><div class=r><b>${esc(i.n)}</b><small class="${n?"un":""}">${fmt(c.lastTs)}</small></div><div class=r><span class=ll>${esc(c.lastText?pre+c.lastText:i.s)}</span>${n?`<span class=bg>${n}</span>`:""}</div></div></div>`}).join(""):`<div class=em>এখনো কোনো চ্যাট নেই।<br>নিচের ＋ চেপে বন্ধু অ্যাড করুন বা গ্রুপ খুলুন।</div>`}
 
-function voiceEl(m){
-  var w=document.createElement("div");w.className="vo";
-  var b=document.createElement("button");b.textContent="▶";
-  var bar=document.createElement("div");bar.className="vb";
-  var fill=document.createElement("div");bar.appendChild(fill);
-  var tl=document.createElement("span");tl.textContent=dfmt(m.dur||0);
-  var a=new Audio();a.preload="none";a.src=m.audio;
-  b.onclick=function(){
-    if(a.paused){
-      if(curAudio&&curAudio!==a)curAudio.pause();
-      curAudio=a;
-      var p=a.play();if(p&&p.catch)p.catch(function(){toast("ভয়েস চালানো যায়নি")});
-    }else a.pause();
-  };
-  a.onplay=function(){b.textContent="⏸"};
-  a.onpause=function(){b.textContent="▶"};
-  a.onended=function(){b.textContent="▶";fill.style.width="0";tl.textContent=dfmt(m.dur||0)};
-  a.ontimeupdate=function(){
-    var d=m.dur||a.duration||1;
-    fill.style.width=Math.min(100,a.currentTime/d*100)+"%";
-    tl.textContent=dfmt(a.currentTime);
-  };
-  w.appendChild(b);w.appendChild(bar);w.appendChild(tl);
-  return w;
-}
-function bubble(m,mine,grp){
-  var d=document.createElement("div");d.className="b "+(mine?"me":"ot");
-  if(grp&&!mine){var sn=document.createElement("div");sn.className="sn";sn.textContent=m.fn||"?";d.appendChild(sn)}
-  if(m.kind==="voice"&&m.audio){d.appendChild(voiceEl(m))}
-  else{var t1=document.createElement("div");t1.textContent=m.text;d.appendChild(t1)}
-  var t2=document.createElement("div");t2.className="t";t2.textContent=fmt(m.ts);d.appendChild(t2);
-  return d;
-}
+// ---------- কল তালিকা ----------
+function rc(){if(!me)return;const ids=Object.keys(CALLS).sort((a,b)=>CALLS[b].ts-CALLS[a].ts);
+ $("cl").innerHTML=ids.length?ids.map(id=>{const d=CALLS[id],out=d.caller==me.uid,o=out?d.callee:d.caller,u=U[o]||{},miss=d.status=="missed"||d.status=="declined"||d.status=="ringing";
+  const dur=d.st&&d.et?" · "+df((d.et-d.st)/1000):"";
+  return`<div class=it onclick="A.dial('${o}',${d.video?1:0})">${av(u.photo,u.name||(out?d.tn:d.cn),50)}<div class=m><b>${esc(u.name||(out?d.tn:d.cn)||"?")}</b><div class=sb style="${miss&&!out?"color:#ef5350":""}">${out?"↗":"↙"} ${miss?"মিসড":d.video?"ভিডিও":"অডিও"} · ${fmt(d.ts)}${dur}</div></div><span style="font-size:22px;color:var(--p)">${d.video?"🎥":"📞"}</span></div>`}).join(""):`<div class=em>কোনো কল নেই</div>`}
 
-function openChat(cid,o){
-  cur=cid;curGrp=!!o.group;
-  el("ct").textContent=o.name;el("cs").textContent=o.sub;
-  el("binfo").style.display=o.group?"block":"none";
-  el("msgs").innerHTML="";show("chat");
-  history.pushState({chat:1},"");
-  resetBar();
-  if(unsubM)unsubM();
-  var first=true;
-  unsubM=onSnapshot(query(collection(db,"chats",cid,"messages"),orderBy("ts")),function(s){
-    var L=el("msgs");
-    s.docChanges().forEach(function(ch){
-      if(ch.type!=="added")return;
-      var m=ch.doc.data(),mine=m.from===me.uid;
-      L.insertBefore(bubble(m,mine,curGrp),L.children[ch.newIndex]||null);
-      if(!first&&!mine)beep();
-    });
-    L.scrollTop=L.scrollHeight;
-    first=false;
-  },function(e){toast("মেসেজ লোড হচ্ছে না: "+e.code)});
-}
-function backHome(){
-  if(unsubM){unsubM();unsubM=null}
-  if(curAudio){curAudio.pause();curAudio=null}
-  if(rec&&rec.state!=="inactive")stopRec(true);
-  cur=null;if(me)show("home");
-}
-window.addEventListener("popstate",function(){if(cur)backHome()});
+// ---------- চ্যাট ----------
+function hdr(){const c=chats[cur];if(!c)return;const i=ci(c);$("cav").innerHTML=av(i.p,i.n,40,i.g);$("ct").textContent=i.n;$("cs").textContent=i.s;$("c1").style.display=$("c2").style.display=i.g?"none":"block"}
+A.oc=id=>{cur=id;$("msgs").innerHTML="";hdr();show("chat");history.pushState({},"");bar();
+ if(unM)unM();let first=true;
+ unM=onSnapshot(query(collection(db,"chats",id,"messages"),orderBy("ts")),s=>{const L=$("msgs"),g=chats[id]&&chats[id].isGroup;
+  s.docChanges().forEach(ch=>{const m=ch.doc.data(),mid=ch.doc.id,mine=m.from==me.uid,b=me.blocked&&me.blocked[m.from];if(b&&m.ts>b)return;
+   if(ch.type=="added"){L.insertBefore(htm(mid,m,mine,g),L.children[ch.newIndex]||null);if(!first&&!mine)beep()}
+   else if(ch.type=="modified"){const e=$("m"+mid);if(e)e.replaceWith(htm(mid,m,mine,g))}});
+  L.scrollTop=L.scrollHeight;first=false;tk();mark()})};
+function htm(id,m,mine,g){const d=document.createElement("div");d.id="m"+id;d.className="b "+(mine?"me":"ot");d.dataset.id=id;
+ let body;if(m.del)body="<i style='opacity:.6'>🚫 মেসেজটি মুছে ফেলা হয়েছে</i>";else if(m.kind=="voice"){AD[id]=m.audio;body=`<div class=vo><button onclick="A.pv(this,'${id}')">▶</button><span>🎤 ${df(m.dur)}</span></div>`}else body=esc(m.text);
+ d.innerHTML=(g&&!mine?`<div class=sn>${esc(m.fn)}</div>`:"")+body+`<div class=t>${fmt(m.ts)} ${mine&&!g?`<span class="tk" data-ts="${m.ts}">✓</span>`:""}</div>`;return d}
+function tk(){const c=chats[cur];if(!c||c.isGroup)return;const o=c.members.find(x=>x!==me.uid),s=c.seen&&c.seen[o]||0;document.querySelectorAll(".tk").forEach(e=>{if(s>=+e.dataset.ts){e.textContent="✓✓";e.classList.add("sn")}})}
+function mark(){if(!cur||document.visibilityState!="visible")return;const u={};u["seen."+me.uid]=Date.now();u["unread."+me.uid]=0;updateDoc(doc(db,"chats",cur),u).catch(()=>{})}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")mark()});
+window.addEventListener("popstate",()=>{if($("md").style.display=="flex")cm();else if($("pg").style.display=="flex")$("pg").style.display="none";else if(cur){cur=null;if(unM){unM();unM=null}if(A.pa){A.pa.pause()}show("main")}});
+async function sendMsg(x,last){const c=chats[cur];if(!c)return;
+ if(!c.isGroup){const o=c.members.find(y=>y!==me.uid);if(U[o]&&U[o].blocked&&U[o].blocked[me.uid])return toast("এই ব্যবহারকারীকে মেসেজ পাঠানো যাচ্ছে না");if(me.blocked&&me.blocked[o])return toast("আগে আনব্লক করুন")}
+ const ts=Date.now();await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,fn:me.name,ts,...x});
+ const up={lastText:last,lastTs:ts,lastFrom:me.uid,lastName:me.name};c.members.forEach(y=>{if(y!=me.uid)up["unread."+y]=increment(1)});await updateDoc(doc(db,"chats",cur),up)}
+function bar(){$("bar").style.display="flex";$("rb").style.display="none";$("in").value="";ic()}
+const ic=()=>$("go").textContent=$("in").value.trim()?"➤":"🎤";
+$("in").oninput=ic;
+$("in").onkeydown=e=>{if(e.key=="Enter"&&!e.shiftKey){e.preventDefault();snd()}};
+function snd(){const v=$("in").value.trim();if(!v)return;$("in").value="";ic();sendMsg({kind:"text",text:v},v).catch(()=>toast("পাঠানো যায়নি"))}
+$("go").onclick=()=>$("in").value.trim()?snd():A.rec();
+// মুছে ফেলা (লং প্রেস)
+let lpT=null;const M=$("msgs");
+M.addEventListener("touchstart",e=>{const b=e.target.closest(".b.me");if(!b)return;lpT=setTimeout(()=>{if(confirm("মেসেজটি সবার জন্য মুছবেন?"))updateDoc(doc(db,"chats",cur,"messages",b.dataset.id),{del:true,text:"",audio:deleteField()}).catch(()=>toast("মোছা যায়নি"))},600)});
+["touchend","touchmove"].forEach(t=>M.addEventListener(t,()=>clearTimeout(lpT)));
+A.pv=(b,id)=>{if(A.pa&&A.pi==id&&!A.pa.paused){A.pa.pause();return}if(A.pa)A.pa.pause();document.querySelectorAll(".vo button").forEach(x=>x.textContent="▶");const a=new Audio(AD[id]);A.pa=a;A.pi=id;a.onplay=()=>b.textContent="⏸";a.onpause=a.onended=()=>b.textContent="▶";a.play().catch(()=>toast("চালানো যায়নি"))};
+// ভয়েস রেকর্ড
+let R=null,RC=[],RT=0,RI=0,RX=0;
+A.rec=async()=>{if(!navigator.mediaDevices||!window.MediaRecorder)return toast("ভয়েস চলবে না");
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:true}),ty=["audio/webm;codecs=opus","audio/webm","audio/mp4"].find(t=>MediaRecorder.isTypeSupported(t))||"",r=R=new MediaRecorder(st,ty?{mimeType:ty,audioBitsPerSecond:16000}:{audioBitsPerSecond:16000});RC=[];RX=0;
+  r.ondataavailable=e=>e.data.size&&RC.push(e.data);
+  r.onstop=()=>{st.getTracks().forEach(t=>t.stop());clearInterval(RI);bar();if(RX)return;const d=Math.round((Date.now()-RT)/1000);if(d<1)return toast("খুব ছোট");const f=new FileReader();f.onload=()=>{if(f.result.length>900000)return toast("ভয়েস অনেক বড়");sendMsg({kind:"voice",audio:f.result,dur:d},"🎤 ভয়েস মেসেজ").catch(()=>toast("পাঠানো যায়নি"))};f.readAsDataURL(new Blob(RC,{type:r.mimeType||ty||"audio/webm"}))};
+  r.start();RT=Date.now();$("bar").style.display="none";$("rb").style.display="flex";RI=setInterval(()=>{const s=(Date.now()-RT)/1000;$("rt").textContent="🔴 "+df(s);if(s>=60)A.rs(0)},300)}catch(e){toast("মাইক্রোফোনের অনুমতি দিন")}};
+A.rs=x=>{RX=x;if(R&&R.state!="inactive")R.stop()};
 
-async function touch(text,ts){
-  await updateDoc(doc(db,"chats",cur),{lastText:text,lastTs:ts,lastFrom:me.uid,lastName:me.name});
-}
-async function send(){
-  var v=el("in").value.trim();if(!v||!cur)return;
-  el("in").value="";btnIcon();
-  var ts=Date.now();
-  try{
-    await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,fn:me.name,kind:"text",text:v,ts:ts});
-    await touch(v,ts);
-  }catch(e){toast("পাঠানো যায়নি");el("in").value=v;btnIcon()}
-}
+// ---------- পেজ ও মডাল ----------
+function page(t,h){$("pg").innerHTML=`<div class=hd><button class=ib onclick="history.back()">←</button><b>${esc(t)}</b></div><div style="flex:1;overflow-y:auto">${h}</div>`;$("pg").style.display="flex";history.pushState({},"")}
+const mod=h=>{$("md").innerHTML=`<div class=mc>${h}</div>`;$("md").style.display="flex";$("md").onclick=e=>{if(e.target.id=="md")cm()}};
+const cm=()=>{stopScan();$("md").style.display="none"};A.cm=cm;
+const own=()=>{history.back()};
+A.ch=()=>{const c=chats[cur];if(!c)return;if(c.isGroup)gi();else pf(ci(c).o)};
+function pf(uid){const u=U[uid]||{},bl=me.blocked&&me.blocked[uid];
+ page(u.name||"প্রোফাইল",`<div class=pb>${av(u.photo,u.name,130)}<h2>${esc(u.name)}</h2><div class=sb>@${esc(u.username)}</div><p>${esc(u.about||"")}</p><div class=row><button class=ro onclick="A.dial('${uid}',0)">📞<small>অডিও</small></button><button class=ro onclick="A.dial('${uid}',1)">🎥<small>ভিডিও</small></button></div><button class="bt ${bl?"g":"rd"}" onclick="A.blk('${uid}')">${bl?"আনব্লক করুন":"🚫 ব্লক করুন"}</button></div>`)}
+A.blk=async uid=>{const bl=me.blocked&&me.blocked[uid];if(!bl&&!confirm("ব্লক করবেন? তার নতুন মেসেজ আপনি দেখবেন না।"))return;await updateDoc(doc(db,"users",me.uid),{["blocked."+uid]:bl?deleteField():Date.now()});toast(bl?"আনব্লক হয়েছে":"ব্লক করা হয়েছে");setTimeout(()=>pf(uid),400)};
+function gi(){const c=chats[cur];page(c.name,`<div class=pb style="padding-bottom:8px">${av(null,c.name,110,1)}<h2>${esc(c.name)}</h2><div class=sb>${c.members.length} জন সদস্য</div></div>`+c.members.map(id=>{const u=U[id]||(c.users&&c.users[id])||{};return`<div class=it>${av(u.photo,u.name,42)}<div class=m><b>${esc(u.name)}</b><div class=sb>@${esc(u.username)}${id==c.admin?" · অ্যাডমিন":""}</div></div></div>`}).join("")+`<div style="padding:14px"><input class=fi id=mi placeholder="নতুন সদস্যের আইডি" autocapitalize=none><button class=bt style="margin-top:10px" onclick="A.am()">সদস্য যোগ করুন</button></div>`)}
+A.am=async()=>{const c=chats[cur],u=cl($("mi").value);if(!u)return;const o=await fu(u);if(!o)return toast("আইডি পাওয়া যায়নি");if(c.members.includes(o.uid))return toast("আগেই সদস্য আছে");const up={members:arrayUnion(o.uid)};up["users."+o.uid]={username:o.username,name:o.name};await updateDoc(doc(db,"chats",cur),up);toast("যোগ করা হয়েছে");history.back()};
+async function fu(u){const s=await getDocs(query(collection(db,"users"),where("username","==",u),limit(1)));if(s.empty)return null;const d=s.docs[0].data();return{uid:s.docs[0].id,username:d.username,name:d.name}}
+A.add=()=>mod(`<h3>নতুন চ্যাট</h3><input id=aid placeholder="বন্ধুর আইডি" autocapitalize=none><button class=bt onclick="A.au()">অ্যাড করুন</button><button class="bt g" onclick="A.scan()">📷 QR স্ক্যান</button><button class="bt g" onclick="A.ng()">👥 নতুন গ্রুপ</button>`);
+A.au=async(raw)=>{const u=cl(raw||$("aid").value);if(!u)return;if(u==me.username)return toast("এটা আপনার নিজের আইডি");
+ try{const o=await fu(u);if(!o)return toast("আইডি পাওয়া যায়নি");const ids=[me.uid,o.uid].sort(),id=ids.join("_"),us={};us[me.uid]={username:me.username,name:me.name};us[o.uid]={username:o.username,name:o.name};
+  await setDoc(doc(db,"chats",id),{members:ids,users:us},{merge:true});cm();watchU(o.uid);setTimeout(()=>A.oc(id),300)}catch(e){toast("অ্যাড করা যায়নি: "+(e.code||""))}};
+A.ng=()=>mod(`<h3>নতুন গ্রুপ</h3><input id=gn placeholder="গ্রুপের নাম"><input id=gi placeholder="সদস্যদের আইডি, কমা দিয়ে" autocapitalize=none><button class=bt onclick="A.mg()">গ্রুপ খুলুন</button>`);
+A.mg=async()=>{const n=$("gn").value.trim(),ids=$("gi").value.split(",").map(cl).filter(x=>x);if(!n||!ids.length)return toast("নাম ও সদস্যের আইডি দিন");
+ try{const us={},mem=[me.uid];us[me.uid]={username:me.username,name:me.name};for(const i of ids){if(i==me.username)continue;const o=await fu(i);if(!o)return toast("পাওয়া যায়নি: "+i);if(!mem.includes(o.uid)){mem.push(o.uid);us[o.uid]={username:o.username,name:o.name}}}
+  if(mem.length<2)return toast("অন্তত একজন বন্ধু লাগবে");const r=await addDoc(collection(db,"chats"),{isGroup:true,name:n,admin:me.uid,members:mem,users:us,lastText:"গ্রুপ খোলা হয়েছে",lastTs:Date.now(),lastFrom:me.uid,lastName:me.name});cm();setTimeout(()=>A.oc(r.id),300)}catch(e){toast("গ্রুপ খোলা যায়নি: "+(e.code||""))}};
+A.qr=()=>{let h="QR বানানো যায়নি";try{const q=qrcode(0,"M");q.addData("vaichat:"+me.username);q.make();h=q.createImgTag(6,8)}catch(e){}mod(`<h3>আমার QR</h3><div style="background:#fff;padding:8px;border-radius:8px">${h}</div><b>@${esc(me.username)}</b><div class=sb>বন্ধু স্ক্যান করলেই অ্যাড হবে</div>`)};
+A.scan=async()=>{mod(`<h3>QR স্ক্যান করুন</h3><video id=sv playsinline muted style="width:100%;border-radius:10px;background:#000"></video>`);
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});const v=$("sv");v.srcObject=stream;await v.play();scanning=true;const cv=document.createElement("canvas"),x=cv.getContext("2d",{willReadFrequently:true});
+  const tick=()=>{if(!scanning)return;if(v.videoWidth){cv.width=v.videoWidth;cv.height=v.videoHeight;x.drawImage(v,0,0);const im=x.getImageData(0,0,cv.width,cv.height),c=jsQR(im.data,im.width,im.height);if(c&&c.data.indexOf("vaichat:")==0){cm();A.au(c.data.slice(8));return}}requestAnimationFrame(tick)};tick()}catch(e){toast("ক্যামেরা চালু করা যায়নি");cm()}};
+function stopScan(){scanning=false;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
 
-function btnIcon(){el("go").textContent=el("in").value.trim()?"➤":"🎤"}
-function resetBar(){el("bar").style.display="flex";el("recbar").style.display="none";el("in").value="";btnIcon()}
-async function startRec(){
-  if(!navigator.mediaDevices||!window.MediaRecorder){toast("এই ব্রাউজারে ভয়েস রেকর্ড চলবে না");return}
-  try{
-    var st=await navigator.mediaDevices.getUserMedia({audio:true});
-    var types=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus"];
-    var mt="";for(var i=0;i<types.length;i++){if(MediaRecorder.isTypeSupported(types[i])){mt=types[i];break}}
-    var opt={audioBitsPerSecond:16000};if(mt)opt.mimeType=mt;
-    var r=new MediaRecorder(st,opt);rec=r;chunks=[];recCancel=false;
-    r.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
-    r.onstop=function(){
-      st.getTracks().forEach(function(t){t.stop()});
-      clearInterval(recTimer);
-      el("recbar").style.display="none";el("bar").style.display="flex";
-      if(recCancel)return;
-      var dur=Math.round((Date.now()-recStart)/1000);
-      if(dur<1){toast("খুব ছোট হয়ে গেছে");return}
-      sendVoice(new Blob(chunks,{type:r.mimeType||mt||"audio/webm"}),dur);
-    };
-    r.start();recStart=Date.now();
-    el("bar").style.display="none";el("recbar").style.display="flex";
-    el("rtxt").textContent="🔴 রেকর্ড হচ্ছে 0:00";
-    recTimer=setInterval(function(){
-      var s=Math.floor((Date.now()-recStart)/1000);
-      el("rtxt").textContent="🔴 রেকর্ড হচ্ছে "+dfmt(s);
-      if(s>=60)stopRec(false);
-    },300);
-  }catch(e){toast("মাইক্রোফোনের অনুমতি দিন")}
-}
-function stopRec(cancel){recCancel=cancel;if(rec&&rec.state!=="inactive")rec.stop()}
-function sendVoice(blob,dur){
-  var chat=cur;
-  var fr=new FileReader();
-  fr.onload=async function(){
-    var data=fr.result;
-    if(data.length>900000){toast("ভয়েসটা অনেক বড়, ছোট করে বলুন");return}
-    var ts=Date.now();
-    try{
-      await addDoc(collection(db,"chats",chat,"messages"),{from:me.uid,fn:me.name,kind:"voice",audio:data,dur:dur,ts:ts});
-      await updateDoc(doc(db,"chats",chat),{lastText:"🎤 ভয়েস মেসেজ",lastTs:ts,lastFrom:me.uid,lastName:me.name});
-    }catch(e){toast("ভয়েস পাঠানো যায়নি")}
-  };
-  fr.readAsDataURL(blob);
-}
+// ---------- সেটিংস ----------
+function rs(){if(!me)return;const u=me;$("ts").innerHTML=`<div class=it onclick="A.me()">${av(u.photo,u.name,64)}<div class=m><b style="font-size:18px">${esc(u.name)}</b><div class=sb>${esc(u.about||"")}</div><div class=sb>@${esc(u.username)}</div></div><span style="font-size:22px" onclick="event.stopPropagation();A.qr()">▦</span></div>
+<div class=st>থিম</div><div class=row style="padding:8px 14px"><button class=ro onclick="A.th('a')" style="font-size:14px">🔵<small>নীল-কালো</small></button><button class=ro onclick="A.th('b')" style="font-size:14px">🟤<small>চকলেট</small></button><button class=ro onclick="A.th('c')" style="font-size:14px">⚪<small>হালকা</small></button></div>
+<div class=st>নিরাপত্তা</div><div class=li onclick="A.lk()">🔒<div class=m>অ্যাপ লক (ক্যালকুলেটর ছদ্মবেশে)<div class=sb>${localStorage.pin?"চালু আছে":"বন্ধ"}</div></div></div>
+<div class=li onclick="A.bll()">🚫<div class=m>ব্লক করা তালিকা</div></div>
+<div class=st>অ্যাকাউন্ট</div><div class=li onclick="A.out()">⏻<div class=m>লগআউট</div></div>`}
+A.th=t=>{localStorage.th=t;document.documentElement.dataset.th=t;document.querySelector("meta[name=theme-color]").content={a:"#0a1929",b:"#3e2723",c:"#0d47a1"}[t]};
+A.me=()=>{const u=me;page("আমার প্রোফাইল",`<div class=pb><div onclick="A.pp()" style="position:relative">${av(u.photo,u.name,140)}<span style="position:absolute;right:0;bottom:0;background:var(--ch);border-radius:50%;padding:8px">📷</span></div><div class=fi onclick="A.en()">নাম: <b>${esc(u.name)}</b> ✎</div><div class=fi onclick="A.ea()">আমার সম্পর্কে: <b>${esc(u.about||"")}</b> ✎</div><div class=sb>আইডি: @${esc(u.username)}</div></div>`)};
+A.pp=()=>{$("fi").onchange=async e=>{const f=e.target.files[0];if(!f)return;const p=await rz(f,200);await updateDoc(doc(db,"users",me.uid),{photo:p});e.target.value="";toast("ছবি বদলানো হয়েছে");setTimeout(A.me,400)};$("fi").click()};
+function rz(f,z){return new Promise(r=>{const i=new Image();i.onload=()=>{const c=document.createElement("canvas");c.width=c.height=z;const s=Math.min(i.width,i.height);c.getContext("2d").drawImage(i,(i.width-s)/2,(i.height-s)/2,s,s,0,0,z,z);r(c.toDataURL("image/jpeg",.75))};i.src=URL.createObjectURL(f)})}
+A.en=async()=>{const n=prompt("আপনার নাম",me.name);if(n&&n.trim()){await updateDoc(doc(db,"users",me.uid),{name:n.trim()});setTimeout(A.me,400)}};
+A.ea=async()=>{const n=prompt("আমার সম্পর্কে",me.about||"");if(n!=null){await updateDoc(doc(db,"users",me.uid),{about:n.trim()});setTimeout(A.me,400)}};
+A.bll=()=>{const b=Object.keys(me.blocked||{});page("ব্লক করা তালিকা",b.length?b.map(id=>{const u=U[id]||{};watchU(id);return`<div class=it onclick="A.blk('${id}')">${av(u.photo,u.name,44)}<div class=m><b>${esc(u.name||"?")}</b><div class=sb>চাপ দিয়ে আনব্লক করুন</div></div></div>`}).join(""):`<div class=em>কাউকে ব্লক করা নেই</div>`)};
 
-async function findUser(u){
-  var qs=await getDocs(query(collection(db,"users"),where("username","==",u),limit(1)));
-  if(qs.empty)return null;
-  var o=qs.docs[0],d=o.data();
-  return {uid:o.id,username:d.username,name:d.name};
-}
-async function addUser(raw){
-  var u=clean(raw);
-  if(!u){toast("আইডি লিখুন");return}
-  if(u===me.username){toast("এটা তো আপনার নিজের আইডি!");return}
-  try{
-    var o=await findUser(u);
-    if(!o){toast("এই আইডি পাওয়া যায়নি");return}
-    var ids=[me.uid,o.uid].sort(),cid=ids.join("_");
-    var users={};
-    users[me.uid]={username:me.username,name:me.name};
-    users[o.uid]={username:o.username,name:o.name};
-    await setDoc(doc(db,"chats",cid),{members:ids,users:users},{merge:true});
-    closeM();
-    openChat(cid,{group:false,name:o.name,sub:"@"+o.username});
-  }catch(e){toast("অ্যাড করা যায়নি: "+(e.code||""))}
-}
-async function makeGroup(){
-  var gn=el("gname").value.trim();
-  var raw=el("gids").value.split(",").map(clean).filter(function(x){return x});
-  if(!gn){toast("গ্রুপের নাম দিন");return}
-  if(!raw.length){toast("কমপক্ষে একজনের আইডি দিন");return}
-  try{
-    var users={},members=[me.uid];
-    users[me.uid]={username:me.username,name:me.name};
-    for(var i=0;i<raw.length;i++){
-      if(raw[i]===me.username)continue;
-      var o=await findUser(raw[i]);
-      if(!o){toast("আইডি পাওয়া যায়নি: "+raw[i]);return}
-      if(members.indexOf(o.uid)<0){members.push(o.uid);users[o.uid]={username:o.username,name:o.name}}
-    }
-    if(members.length<2){toast("অন্তত একজন বন্ধু লাগবে");return}
-    var ts=Date.now();
-    var ref=await addDoc(collection(db,"chats"),{isGroup:true,name:gn,admin:me.uid,members:members,users:users,lastText:"গ্রুপ খোলা হয়েছে",lastTs:ts,lastFrom:me.uid,lastName:me.name});
-    closeM();
-    openChat(ref.id,{group:true,name:gn,sub:members.length+" জন সদস্য"});
-  }catch(e){toast("গ্রুপ খোলা যায়নি: "+(e.code||""))}
-}
-function showInfo(){
-  var c=chatsData[cur];if(!c)return;
-  el("itl").textContent=c.name||"গ্রুপ";
-  var M=el("mems");M.innerHTML="";
-  c.members.forEach(function(id){
-    var u=(c.users&&c.users[id])||{name:"?",username:"?"};
-    var d=document.createElement("div");d.className="mem";
-    d.textContent=u.name+" (@"+u.username+")"+(id===c.admin?" ⭐":"");
-    M.appendChild(d);
-  });
-  el("minp").value="";
-  openM("mInfo");
-}
-async function addMember(){
-  var c=chatsData[cur];if(!c)return;
-  var u=clean(el("minp").value);if(!u)return;
-  try{
-    var o=await findUser(u);
-    if(!o){toast("এই আইডি পাওয়া যায়নি");return}
-    if(c.members.indexOf(o.uid)>=0){toast("আগেই সদস্য আছেন");return}
-    var up={members:arrayUnion(o.uid)};
-    up["users."+o.uid]={username:o.username,name:o.name};
-    await updateDoc(doc(db,"chats",cur),up);
-    toast(o.name+" কে যোগ করা হয়েছে");
-    closeM();
-  }catch(e){toast("যোগ করা যায়নি: "+(e.code||""))}
-}
+// ---------- অ্যাপ লক (ক্যালকুলেটর) ----------
+A.lk=()=>{if(localStorage.pin){if(confirm("অ্যাপ লক বন্ধ করবেন?")){localStorage.removeItem("pin");rs()}}else{const p=prompt("৪ থেকে ৮ সংখ্যার গোপন পিন দিন (লক খুলতে পিন লিখে = চাপবেন)");if(p&&/^[0-9]{4,8}$/.test(p)){localStorage.pin=p;toast("লক চালু হয়েছে");rs()}else if(p)toast("৪-৮ সংখ্যা দিন")}};
+let ent="";function lockNow(){ent="";$("ld").textContent="0";$("lock").style.display="flex"}
+$("lk").innerHTML=["C","⌫","%","÷","7","8","9","×","4","5","6","−","1","2","3","+","0","00",".","="].map(k=>`<button class="${"÷×−+=".includes(k)?"o":""}" data-k="${k}">${k}</button>`).join("");
+$("lk").onclick=e=>{const k=e.target.dataset.k;if(!k)return;if(k=="C")ent="";else if(k=="⌫")ent=ent.slice(0,-1);else if(k=="="){if(ent==localStorage.pin){$("lock").style.display="none"}else ent=""}else if(/[0-9]/.test(k))ent+=k;$("ld").textContent=ent||"0"};
+let hid=0;document.addEventListener("visibilitychange",()=>{if(document.hidden)hid=Date.now();else if(localStorage.pin&&me&&Date.now()-hid>15000)lockNow()});
 
-function openM(id){
-  el("modal").style.display="flex";
-  ["mAdd","mQR","mScan","mGroup","mInfo"].forEach(function(x){el(x).style.display=x===id?"flex":"none"});
-}
-function stopScan(){scanning=false;if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}}
-function closeM(){stopScan();el("modal").style.display="none"}
-function showQR(){
-  openM("mQR");
-  try{
-    var q=qrcode(0,"M");q.addData("vaichat:"+me.username);q.make();
-    el("qrbox").innerHTML=q.createImgTag(6,8);
-  }catch(e){el("qrbox").textContent="QR বানানো যায়নি"}
-  el("myid").textContent="@"+me.username;
-}
-async function startScan(){
-  openM("mScan");
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
-    var v=el("vid");v.srcObject=stream;await v.play();scanning=true;
-    var cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
-    var tick=function(){
-      if(!scanning)return;
-      if(v.videoWidth){
-        cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);
-        var im=cx.getImageData(0,0,cv.width,cv.height);
-        var c=jsQR(im.data,im.width,im.height);
-        if(c&&c.data.indexOf("vaichat:")===0){closeM();addUser(c.data.slice(8));return}
-      }
-      requestAnimationFrame(tick);
-    };
-    tick();
-  }catch(e){toast("ক্যামেরা চালু করা যায়নি");closeM()}
-}
-
-el("bl").onclick=login;el("br").onclick=register;
-el("bout").onclick=function(){signOut(auth)};
-el("badd").onclick=function(){el("aid").value="";openM("mAdd")};
-el("bqr").onclick=showQR;
-el("aok").onclick=function(){addUser(el("aid").value)};
-el("ascan").onclick=startScan;
-el("agrp").onclick=function(){el("gname").value="";el("gids").value="";openM("mGroup")};
-el("gok").onclick=makeGroup;
-el("binfo").onclick=showInfo;
-el("madd").onclick=addMember;
-["aclose1","aclose2","aclose3","aclose4","aclose5"].forEach(function(i){el(i).onclick=closeM});
-el("bback").onclick=function(){history.back()};
-el("go").onclick=function(){if(el("in").value.trim())send();else startRec()};
-el("rsend").onclick=function(){stopRec(false)};
-el("rcancel").onclick=function(){stopRec(true)};
-el("in").addEventListener("input",btnIcon);
-el("in").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
-if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"/bhaichat/"}).catch(function(){});
+// ---------- অডিও/ভিডিও কল ----------
+const gm=v=>navigator.mediaDevices.getUserMedia({audio:true,video:v?{facingMode:"user"}:false});
+function mkpc(id,st){const pc=new RTCPeerConnection(ICE);st.getTracks().forEach(t=>pc.addTrack(t,st));pc.ontrack=e=>{$("rv").srcObject=e.streams[0]};pc.onicecandidate=e=>{if(e.candidate)addDoc(collection(db,"calls",id,"cand"),{from:me.uid,c:JSON.stringify(e.candidate)}).catch(()=>{})};return pc}
+function wc(id,pc){call.pend=[];return onSnapshot(collection(db,"calls",id,"cand"),s=>s.docChanges().forEach(ch=>{if(ch.type!="added")return;const d=ch.doc.data();if(d.from==me.uid)return;const c=JSON.parse(d.c);if(pc.remoteDescription)pc.addIceCandidate(c).catch(()=>{});else call.pend.push(c)}))}
+async function fl(pc){for(const c of call.pend.splice(0))await pc.addIceCandidate(c).catch(()=>{})}
+A.cc=v=>{const c=chats[cur];if(c&&!c.isGroup)A.dial(ci(c).o,v)};
+A.dial=async(o,v)=>{if(call)return;if(!navigator.mediaDevices)return toast("এই ব্রাউজারে কল চলবে না");
+ if((U[o]&&U[o].blocked&&U[o].blocked[me.uid])||(me.blocked&&me.blocked[o]))return toast("এই ব্যবহারকারীকে কল করা যাচ্ছে না");
+ $("pg").style.display="none";let st;try{st=await gm(v)}catch(e){return toast("মাইক/ক্যামেরার অনুমতি দিন")}
+ const id=doc(collection(db,"calls")).id,pc=mkpc(id,st);call={id,pc,st,video:!!v,role:"out",state:"ring",o,u:[]};cui();
+ call.u.push(wc(id,pc));const of=await pc.createOffer();await pc.setLocalDescription(of);
+ await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:of.type,sdp:of.sdp},ts:Date.now()});
+ call.rt=setInterval(()=>beep(440),2000);
+ call.u.push(onSnapshot(doc(db,"calls",id),async s=>{const d=s.data();if(!d||!call||call.id!=id)return;if(d.answer&&!pc.remoteDescription){await pc.setRemoteDescription(d.answer);await fl(pc)}
+  if(d.status=="accepted"&&call.state!="on")go();if(["ended","declined","missed"].includes(d.status))stop(d.status=="declined"?"কল প্রত্যাখ্যান করা হয়েছে":"কল শেষ")}));
+ call.to=setTimeout(()=>{if(call&&call.state=="ring")A.hang()},45000)};
+function incoming(id,d){call={id,d,video:d.video,role:"in",state:"inring",u:[],pend:[]};call.rt=setInterval(()=>beep(660),1500);cui();watchU(d.caller)}
+A.acc=async()=>{const {id,d}=call;clearInterval(call.rt);let st;try{st=await gm(d.video)}catch(e){toast("অনুমতি দিন");return A.dec()}
+ const pc=mkpc(id,st);call.pc=pc;call.st=st;call.u.push(wc(id,pc));await pc.setRemoteDescription(d.offer);await fl(pc);const an=await pc.createAnswer();await pc.setLocalDescription(an);
+ await updateDoc(doc(db,"calls",id),{answer:{type:an.type,sdp:an.sdp},status:"accepted",st:Date.now()});
+ call.u.push(onSnapshot(doc(db,"calls",id),s=>{const x=s.data();if(x&&x.status=="ended")stop("কল শেষ")}));go()};
+A.dec=async()=>{const id=call.id;await updateDoc(doc(db,"calls",id),{status:"declined"}).catch(()=>{});stop("")};
+A.hang=async()=>{const id=call.id,s=call.role=="out"&&call.state=="ring"?"missed":"ended";await updateDoc(doc(db,"calls",id),{status:s,et:Date.now()}).catch(()=>{});stop("কল শেষ")};
+function go(){clearInterval(call.rt);clearTimeout(call.to);call.state="on";call.t0=Date.now();call.tm=setInterval(()=>$("cst").textContent=df((Date.now()-call.t0)/1000),500);cui()}
+function stop(msg){if(!call)return;[call.rt,call.tm,call.to].forEach(x=>{clearInterval(x);clearTimeout(x)});call.u.forEach(f=>f());if(call.st)call.st.getTracks().forEach(t=>t.stop());if(call.pc)call.pc.close();$("rv").srcObject=null;$("lv").srcObject=null;$("call").style.display="none";call=null;if(msg)toast(msg)}
+A.mu=b=>{const t=call.st.getAudioTracks()[0];t.enabled=!t.enabled;b.textContent=t.enabled?"🎤":"🔇"};
+A.cm2=b=>{const t=call.st.getVideoTracks()[0];if(t){t.enabled=!t.enabled;b.textContent=t.enabled?"📷":"🚫"}};
+function cui(){const k=call,o=k.role=="out"?k.o:k.d.caller,u=U[o]||{},nm=u.name||(k.role=="out"?"":k.d.cn)||"কল";
+ $("call").style.display="flex";$("cia").innerHTML=k.video?"":av(u.photo,nm,120);$("cn").textContent=nm;
+ $("rv").style.display=k.video?"block":"none";$("lv").style.display=k.video&&k.st?"block":"none";if(k.st)$("lv").srcObject=k.st;
+ $("cst").textContent=k.state=="ring"?"রিং হচ্ছে...":k.state=="inring"?(k.video?"ইনকামিং ভিডিও কল":"ইনকামিং অডিও কল"):"সংযুক্ত হচ্ছে...";
+ $("cb").innerHTML=k.state=="inring"?`<button class=rd onclick="A.dec()">✕</button><button class=gr onclick="A.acc()">📞</button>`:k.state=="ring"?`<button class=rd onclick="A.hang()">✕</button>`:`<button onclick="A.mu(this)">🎤</button>${k.video?`<button onclick="A.cm2(this)">📷</button>`:""}<button class=rd onclick="A.hang()">✕</button>`}
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
