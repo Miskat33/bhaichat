@@ -35,6 +35,9 @@ nav button small{font-size:11px}nav button.on{color:#fff;box-shadow:inset 0 3px 
 .sn{font-size:12px;font-weight:700;color:var(--p);margin-bottom:2px}.t{font-size:11px;color:var(--sb);text-align:right;margin-top:2px}
 .tk.sn{color:#4fc3f7;font-size:11px;margin:0}
 .vo{display:flex;align-items:center;gap:8px;min-width:150px}.vo button{width:36px;height:36px;border-radius:50%;border:none;background:var(--ch);color:#fff}
+#vw{z-index:50;background:#000;align-items:center;justify-content:center}#vc{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.mi{max-width:240px;max-height:300px;border-radius:8px;display:block}.fb{display:flex;gap:10px;align-items:center;min-width:180px;font-size:30px}.fb b{font-size:14px;word-break:break-all}.fb .sb{font-size:12px}
+.ab{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}.ab button{padding:16px 6px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);font-size:28px;display:flex;flex-direction:column;align-items:center;gap:4px}.ab small{font-size:13px;color:var(--tx)}
 #bar,#rb{display:flex;gap:8px;padding:8px;background:var(--bg);align-items:center}#rb{display:none}
 #in{flex:1;border:none;border-radius:22px;padding:12px 16px;font-size:16px;outline:none;resize:none;max-height:100px;background:var(--cd)}
 .cb{width:48px;height:48px;border:none;border-radius:50%;background:var(--p);color:#fff;font-size:21px;flex-shrink:0}
@@ -81,14 +84,15 @@ nav button small{font-size:11px}nav button.on{color:#fff;box-shadow:inset 0 3px 
 <div id="chat" class="sc">
 <div class="hd"><button class="ib" onclick="history.back()">←</button><div id="cav" onclick="A.ch()"></div><b onclick="A.ch()"><span id="ct"></span><small id="cs"></small></b><button class="ib" id="c1" onclick="A.cc(0)">📞</button><button class="ib" id="c2" onclick="A.cc(1)">🎥</button></div>
 <div id="msgs"></div>
-<div id="bar"><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন"></textarea><button class="cb" id="go">🎤</button></div>
+<div id="bar"><button class="cb" style="background:var(--ot)" onclick="A.att()">📎</button><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন"></textarea><button class="cb" id="go">🎤</button></div>
 <div id="rb"><button class="cb" style="background:#c62828" onclick="A.rs(1)">✕</button><div id="rt"></div><button class="cb" onclick="A.rs(0)">➤</button></div></div>
 
 <div id="pg" class="sc"></div>
 <div id="md" class="mdl"></div>
 <div id="call" class="sc"><video id="rv" autoplay playsinline></video><video id="lv" autoplay playsinline muted></video><div id="ci"><div id="cia"></div><h2 id="cn"></h2><div id="cst"></div></div><div id="cb"></div></div>
 <div id="lock" class="sc"><div id="ld">0</div><div id="lk"></div></div>
-<input type="file" id="fi" accept="image/*" hidden><div id="toast"></div>
+<div id="vw" class="sc"><button class="ib" style="position:absolute;top:10px;left:10px;z-index:2" onclick="history.back()">✕</button><a id="vdl" style="position:absolute;top:16px;right:16px;color:#fff;font-size:18px;z-index:2">💾 সেভ</a><div id="vc"></div></div>
+<input type="file" id="fi" accept="image/*" hidden><input type="file" id="f1" accept="image/*" hidden><input type="file" id="f2" accept="image/*" capture="environment" hidden><input type="file" id="f3" accept="video/*" hidden><input type="file" id="f4" hidden><div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
@@ -103,11 +107,12 @@ try{db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:pers
 const $=i=>document.getElementById(i),A={};window.A=A;
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const COL=["#1e88e5","#8d5a3b","#00897b","#5e35b1","#c2185b","#f57c00"];
-let me=null,U={},chats={},cur=null,reg=false,unC=null,unM=null,uw={},CALLS={},AD={},call=null,stream=null,scanning=false;
-const ICE={iceServers:[{urls:["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"]}]};
+let me=null,U={},chats={},cur=null,reg=false,unC=null,unM=null,uw={},CALLS={},AD={},MS={},BL={},upl=false,call=null,stream=null,scanning=false;
+const ICE={iceServers:[{urls:["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"]},{urls:["turn:openrelay.metered.ca:80","turn:openrelay.metered.ca:443","turn:openrelay.metered.ca:443?transport=tcp"],username:"openrelayproject",credential:"openrelayproject"}]};
 
 const toast=t=>{const d=$("toast");d.textContent=t;d.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>d.style.display="none",2600)};
 const show=n=>["auth","main","chat"].forEach(x=>$(x).style.display=x==n?"flex":"none");
+const sz=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB";
 const df=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+("0"+s%60).slice(-2)};
 const fmt=ts=>{if(!ts)return"";const d=new Date(ts);return d.toDateString()==new Date().toDateString()?d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString([],{day:"numeric",month:"short"})};
 const beep=(f=800)=>{try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=f;o.start();o.stop(c.currentTime+.15)}catch(e){}};
@@ -132,7 +137,7 @@ async function boot(u){
  unC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),s=>{chats={};s.forEach(x=>chats[x.id]=x.data());Object.values(chats).forEach(c=>{if(!c.isGroup)watchU(c.members.find(x=>x!==me.uid))});rl();if(cur){hdr();tk()}},e=>toast("লোড হচ্ছে না: "+e.code));
  ["caller","callee"].forEach(f=>onSnapshot(query(collection(db,"calls"),where(f,"==",me.uid)),s=>{
   s.docChanges().forEach(ch=>{const d=ch.doc.data(),id=ch.doc.id;CALLS[id]=d;const o=d.caller==me.uid?d.callee:d.caller;watchU(o);
-   if(f=="callee"){if(ch.type=="added"&&d.status=="ringing"&&Date.now()-d.ts<60000&&!call)incoming(id,d);
+   if(f=="callee"){if(ch.type=="added"&&d.status=="ringing"&&Math.abs(Date.now()-d.ts)<120000&&!call)incoming(id,d);
     if(call&&call.id==id&&call.state=="inring"&&d.status!="ringing"){stop("মিসড কল")}}});rc()}));
  if(localStorage.pin)lockNow();
 }
@@ -163,17 +168,36 @@ A.oc=id=>{cur=id;$("msgs").innerHTML="";hdr();show("chat");history.pushState({},
    if(ch.type=="added"){L.insertBefore(htm(mid,m,mine,g),L.children[ch.newIndex]||null);if(!first&&!mine)beep()}
    else if(ch.type=="modified"){const e=$("m"+mid);if(e)e.replaceWith(htm(mid,m,mine,g))}});
   L.scrollTop=L.scrollHeight;first=false;tk();mark()})};
-function htm(id,m,mine,g){const d=document.createElement("div");d.id="m"+id;d.className="b "+(mine?"me":"ot");d.dataset.id=id;
- let body;if(m.del)body="<i style='opacity:.6'>🚫 মেসেজটি মুছে ফেলা হয়েছে</i>";else if(m.kind=="voice"){AD[id]=m.audio;body=`<div class=vo><button onclick="A.pv(this,'${id}')">▶</button><span>🎤 ${df(m.dur)}</span></div>`}else body=esc(m.text);
+function htm(id,m,mine,g){MS[id]=m;const d=document.createElement("div");d.id="m"+id;d.className="b "+(mine?"me":"ot");d.dataset.id=id;
+ let body;if(m.del)body="<i style='opacity:.6'>🚫 মেসেজটি মুছে ফেলা হয়েছে</i>";else if(m.kind=="voice"){AD[id]=m.audio;body=`<div class=vo><button onclick="A.pv(this,'${id}')">▶</button><span>🎤 ${df(m.dur)}</span></div>`}else if(m.kind=="image")body=`<img class=mi src="${m.thumb}" onclick="A.vo('${id}')">`;else if(m.kind=="video"||m.kind=="file")body=`<div class=fb onclick="A.vo('${id}')">${m.kind=="video"?"🎥":"📄"}<div><b>${esc(m.name)}</b><div class=sb>${sz(m.size)} · ${m.kind=="video"?"চালাতে চাপুন":"ডাউনলোড করতে চাপুন"}</div></div></div>`;else body=esc(m.text);
  d.innerHTML=(g&&!mine?`<div class=sn>${esc(m.fn)}</div>`:"")+body+`<div class=t>${fmt(m.ts)} ${mine&&!g?`<span class="tk" data-ts="${m.ts}">✓</span>`:""}</div>`;return d}
 function tk(){const c=chats[cur];if(!c||c.isGroup)return;const o=c.members.find(x=>x!==me.uid),s=c.seen&&c.seen[o]||0;document.querySelectorAll(".tk").forEach(e=>{if(s>=+e.dataset.ts){e.textContent="✓✓";e.classList.add("sn")}})}
 function mark(){if(!cur||document.visibilityState!="visible")return;const u={};u["seen."+me.uid]=Date.now();u["unread."+me.uid]=0;updateDoc(doc(db,"chats",cur),u).catch(()=>{})}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")mark()});
-window.addEventListener("popstate",()=>{if($("md").style.display=="flex")cm();else if($("pg").style.display=="flex")$("pg").style.display="none";else if(cur){cur=null;if(unM){unM();unM=null}if(A.pa){A.pa.pause()}show("main")}});
-async function sendMsg(x,last){const c=chats[cur];if(!c)return;
+window.addEventListener("popstate",()=>{if($("vw").style.display=="flex"){$("vw").style.display="none";$("vc").innerHTML="";return}if($("md").style.display=="flex")cm();else if($("pg").style.display=="flex")$("pg").style.display="none";else if(cur){cur=null;if(unM){unM();unM=null}if(A.pa){A.pa.pause()}show("main")}});
+async function sendMsg(x,last,id,cid=cur){const c=chats[cid];if(!c)return;
  if(!c.isGroup){const o=c.members.find(y=>y!==me.uid);if(U[o]&&U[o].blocked&&U[o].blocked[me.uid])return toast("এই ব্যবহারকারীকে মেসেজ পাঠানো যাচ্ছে না");if(me.blocked&&me.blocked[o])return toast("আগে আনব্লক করুন")}
- const ts=Date.now();await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,fn:me.name,ts,...x});
- const up={lastText:last,lastTs:ts,lastFrom:me.uid,lastName:me.name};c.members.forEach(y=>{if(y!=me.uid)up["unread."+y]=increment(1)});await updateDoc(doc(db,"chats",cur),up)}
+ const ts=Date.now(),d={from:me.uid,fn:me.name,ts,...x};if(id)await setDoc(doc(db,"chats",cid,"messages",id),d);else await addDoc(collection(db,"chats",cid,"messages"),d);
+ const up={lastText:last,lastTs:ts,lastFrom:me.uid,lastName:me.name};c.members.forEach(y=>{if(y!=me.uid)up["unread."+y]=increment(1)});await updateDoc(doc(db,"chats",cid),up)}
+// ---------- ছবি, ভিডিও, ফাইল ----------
+const CH=700000,MAXF=5*1048576;
+A.att=()=>mod(`<h3>পাঠান</h3><div class=ab><button onclick="A.pk(1)">🖼<small>ছবি</small></button><button onclick="A.pk(2)">📷<small>ক্যামেরা</small></button><button onclick="A.pk(3)">🎥<small>ভিডিও</small></button><button onclick="A.pk(4)">📄<small>ফাইল</small></button></div><div class=sb>ভিডিও ও ফাইল সর্বোচ্চ ৫ MB। ছবি নিজে ছোট হয়ে যাবে।</div>`);
+A.pk=n=>{cm();$("f"+n).click()};
+[["f1","image"],["f2","image"],["f3","video"],["f4","file"]].forEach(([i,k])=>$(i).onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)sendFile(f,k)});
+const rd=f=>new Promise((r,j)=>{const x=new FileReader();x.onload=()=>r(x.result);x.onerror=j;x.readAsDataURL(f)});
+function cimg(f){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),i=new Image();i.onerror=rej;i.onload=()=>{const mk=(m,q)=>{const k=Math.min(1,m/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext("2d").drawImage(i,0,0,c.width,c.height);return c.toDataURL("image/jpeg",q)};const o={full:mk(1280,.72),thumb:mk(240,.6)};URL.revokeObjectURL(u);res(o)};i.src=u})}
+async function sendFile(f,kind){if(!cur||upl)return toast(upl?"আগের ফাইল পাঠানো শেষ হোক":"");const cid=cur;let data,thumb;
+ try{if(kind=="image"){if(!f.type.startsWith("image/"))kind="file";}
+  if(kind=="image"){const r=await cimg(f);data=r.full;thumb=r.thumb}else{if(f.size>MAXF)return toast("ফাইল সর্বোচ্চ ৫ MB হতে পারবে");data=await rd(f)}
+  const n=Math.ceil(data.length/CH),id=doc(collection(db,"chats",cid,"messages")).id;upl=true;
+  for(let i=0;i<n;i++){toast("পাঠানো হচ্ছে "+(i+1)+"/"+n);await setDoc(doc(db,"chats",cid,"messages",id,"parts",String(i)),{d:data.slice(i*CH,(i+1)*CH)})}
+  const x={kind,name:f.name||(kind=="image"?"photo.jpg":"file"),mime:kind=="image"?"image/jpeg":f.type,size:kind=="image"?Math.round(data.length*.75):f.size,n};if(thumb)x.thumb=thumb;
+  await sendMsg(x,kind=="image"?"📷 ছবি":kind=="video"?"🎥 ভিডিও":"📄 "+x.name,id,cid);toast("পাঠানো হয়েছে")}catch(e){toast("পাঠানো যায়নি")}upl=false}
+async function gb(mid,m){if(BL[mid])return BL[mid];const s=await getDocs(collection(db,"chats",cur,"messages",mid,"parts"));if(s.size<m.n)throw 0;const a=[];s.forEach(x=>a[+x.id]=x.data().d);const b=await(await fetch(a.join(""))).blob();return BL[mid]=URL.createObjectURL(b)}
+A.vo=async mid=>{const m=MS[mid];if(!m)return;toast("লোড হচ্ছে...");
+ try{const u=await gb(mid,m);if(m.kind=="file"){const a=document.createElement("a");a.href=u;a.download=m.name||"file";document.body.appendChild(a);a.click();a.remove();toast("সেভ হচ্ছে");return}
+  $("vc").innerHTML=m.kind=="image"?`<img src="${u}" style="max-width:100%;max-height:100%">`:`<video src="${u}" controls autoplay playsinline style="max-width:100%;max-height:100%"></video>`;
+  $("vdl").href=u;$("vdl").download=m.name||"file";$("vw").style.display="flex";history.pushState({},"")}catch(e){toast("ফাইল এখনো আপলোড হচ্ছে বা পাওয়া যায়নি")}};
 function bar(){$("bar").style.display="flex";$("rb").style.display="none";$("in").value="";ic()}
 const ic=()=>$("go").textContent=$("in").value.trim()?"➤":"🎤";
 $("in").oninput=ic;
@@ -182,7 +206,7 @@ function snd(){const v=$("in").value.trim();if(!v)return;$("in").value="";ic();s
 $("go").onclick=()=>$("in").value.trim()?snd():A.rec();
 // মুছে ফেলা (লং প্রেস)
 let lpT=null;const M=$("msgs");
-M.addEventListener("touchstart",e=>{const b=e.target.closest(".b.me");if(!b)return;lpT=setTimeout(()=>{if(confirm("মেসেজটি সবার জন্য মুছবেন?"))updateDoc(doc(db,"chats",cur,"messages",b.dataset.id),{del:true,text:"",audio:deleteField()}).catch(()=>toast("মোছা যায়নি"))},600)});
+M.addEventListener("touchstart",e=>{const b=e.target.closest(".b.me");if(!b)return;lpT=setTimeout(()=>{if(confirm("মেসেজটি সবার জন্য মুছবেন?"))updateDoc(doc(db,"chats",cur,"messages",b.dataset.id),{del:true,text:"",audio:deleteField(),thumb:deleteField()}).catch(()=>toast("মোছা যায়নি"))},600)});
 ["touchend","touchmove"].forEach(t=>M.addEventListener(t,()=>clearTimeout(lpT)));
 A.pv=(b,id)=>{if(A.pa&&A.pi==id&&!A.pa.paused){A.pa.pause();return}if(A.pa)A.pa.pause();document.querySelectorAll(".vo button").forEach(x=>x.textContent="▶");const a=new Audio(AD[id]);A.pa=a;A.pi=id;a.onplay=()=>b.textContent="⏸";a.onpause=a.onended=()=>b.textContent="▶";a.play().catch(()=>toast("চালানো যায়নি"))};
 // ভয়েস রেকর্ড
@@ -243,35 +267,40 @@ let hid=0;document.addEventListener("visibilitychange",()=>{if(document.hidden)h
 
 // ---------- অডিও/ভিডিও কল ----------
 const gm=v=>navigator.mediaDevices.getUserMedia({audio:true,video:v?{facingMode:"user"}:false});
-function mkpc(id,st){const pc=new RTCPeerConnection(ICE);st.getTracks().forEach(t=>pc.addTrack(t,st));pc.ontrack=e=>{$("rv").srcObject=e.streams[0]};pc.onicecandidate=e=>{if(e.candidate)addDoc(collection(db,"calls",id,"cand"),{from:me.uid,c:JSON.stringify(e.candidate)}).catch(()=>{})};return pc}
-function wc(id,pc){call.pend=[];return onSnapshot(collection(db,"calls",id,"cand"),s=>s.docChanges().forEach(ch=>{if(ch.type!="added")return;const d=ch.doc.data();if(d.from==me.uid)return;const c=JSON.parse(d.c);if(pc.remoteDescription)pc.addIceCandidate(c).catch(()=>{});else call.pend.push(c)}))}
-async function fl(pc){for(const c of call.pend.splice(0))await pc.addIceCandidate(c).catch(()=>{})}
+function mkpc(st){const pc=new RTCPeerConnection(ICE);st.getTracks().forEach(t=>pc.addTrack(t,st));
+ pc.ontrack=e=>{const r=$("rv");r.srcObject=e.streams[0];r.play().catch(()=>{})};
+ pc.oniceconnectionstatechange=()=>{if(call&&call.pc===pc&&pc.iceConnectionState=="failed"){toast("কল সংযোগ হয়নি (নেটওয়ার্ক সমস্যা)");A.hang()}};return pc}
+const gat=pc=>new Promise(r=>{if(pc.iceGatheringState=="complete")return r();const f=()=>{if(pc.iceGatheringState=="complete"){pc.removeEventListener("icegatheringstatechange",f);r()}};pc.addEventListener("icegatheringstatechange",f);setTimeout(r,5000)});
 A.cc=v=>{const c=chats[cur];if(c&&!c.isGroup)A.dial(ci(c).o,v)};
 A.dial=async(o,v)=>{if(call)return;if(!navigator.mediaDevices)return toast("এই ব্রাউজারে কল চলবে না");
  if((U[o]&&U[o].blocked&&U[o].blocked[me.uid])||(me.blocked&&me.blocked[o]))return toast("এই ব্যবহারকারীকে কল করা যাচ্ছে না");
  $("pg").style.display="none";let st;try{st=await gm(v)}catch(e){return toast("মাইক/ক্যামেরার অনুমতি দিন")}
- const id=doc(collection(db,"calls")).id,pc=mkpc(id,st);call={id,pc,st,video:!!v,role:"out",state:"ring",o,u:[]};cui();
- call.u.push(wc(id,pc));const of=await pc.createOffer();await pc.setLocalDescription(of);
- await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:of.type,sdp:of.sdp},ts:Date.now()});
+ const id=doc(collection(db,"calls")).id,pc=mkpc(st);call={id,pc,st,video:!!v,role:"out",state:"ring",o,u:[]};cui();
+ try{await pc.setLocalDescription(await pc.createOffer());await gat(pc);if(!call||call.id!=id)return;
+  await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:"offer",sdp:pc.localDescription.sdp},ts:Date.now()})}catch(e){stop("কল শুরু করা যায়নি");return}
  call.rt=setInterval(()=>beep(440),2000);
- call.u.push(onSnapshot(doc(db,"calls",id),async s=>{const d=s.data();if(!d||!call||call.id!=id)return;if(d.answer&&!pc.remoteDescription){await pc.setRemoteDescription(d.answer);await fl(pc)}
-  if(d.status=="accepted"&&call.state!="on")go();if(["ended","declined","missed"].includes(d.status))stop(d.status=="declined"?"কল প্রত্যাখ্যান করা হয়েছে":"কল শেষ")}));
- call.to=setTimeout(()=>{if(call&&call.state=="ring")A.hang()},45000)};
-function incoming(id,d){call={id,d,video:d.video,role:"in",state:"inring",u:[],pend:[]};call.rt=setInterval(()=>beep(660),1500);cui();watchU(d.caller)}
-A.acc=async()=>{const {id,d}=call;clearInterval(call.rt);let st;try{st=await gm(d.video)}catch(e){toast("অনুমতি দিন");return A.dec()}
- const pc=mkpc(id,st);call.pc=pc;call.st=st;call.u.push(wc(id,pc));await pc.setRemoteDescription(d.offer);await fl(pc);const an=await pc.createAnswer();await pc.setLocalDescription(an);
- await updateDoc(doc(db,"calls",id),{answer:{type:an.type,sdp:an.sdp},status:"accepted",st:Date.now()});
- call.u.push(onSnapshot(doc(db,"calls",id),s=>{const x=s.data();if(x&&x.status=="ended")stop("কল শেষ")}));go()};
-A.dec=async()=>{const id=call.id;await updateDoc(doc(db,"calls",id),{status:"declined"}).catch(()=>{});stop("")};
-A.hang=async()=>{const id=call.id,s=call.role=="out"&&call.state=="ring"?"missed":"ended";await updateDoc(doc(db,"calls",id),{status:s,et:Date.now()}).catch(()=>{});stop("কল শেষ")};
-function go(){clearInterval(call.rt);clearTimeout(call.to);call.state="on";call.t0=Date.now();call.tm=setInterval(()=>$("cst").textContent=df((Date.now()-call.t0)/1000),500);cui()}
-function stop(msg){if(!call)return;[call.rt,call.tm,call.to].forEach(x=>{clearInterval(x);clearTimeout(x)});call.u.forEach(f=>f());if(call.st)call.st.getTracks().forEach(t=>t.stop());if(call.pc)call.pc.close();$("rv").srcObject=null;$("lv").srcObject=null;$("call").style.display="none";call=null;if(msg)toast(msg)}
-A.mu=b=>{const t=call.st.getAudioTracks()[0];t.enabled=!t.enabled;b.textContent=t.enabled?"🎤":"🔇"};
-A.cm2=b=>{const t=call.st.getVideoTracks()[0];if(t){t.enabled=!t.enabled;b.textContent=t.enabled?"📷":"🚫"}};
-function cui(){const k=call,o=k.role=="out"?k.o:k.d.caller,u=U[o]||{},nm=u.name||(k.role=="out"?"":k.d.cn)||"কল";
+ call.u.push(onSnapshot(doc(db,"calls",id),async s=>{const d=s.data();if(!d||!call||call.id!=id)return;
+  if(d.answer&&!pc.remoteDescription){try{await pc.setRemoteDescription(d.answer)}catch(e){}}
+  if(d.status=="accepted"&&call.state!="on")go();
+  if(["ended","declined","missed"].includes(d.status))stop(d.status=="declined"?"কল প্রত্যাখ্যান করা হয়েছে":"কল শেষ")}));
+ call.to=setTimeout(()=>{if(call&&call.id==id&&call.state=="ring")A.hang()},45000)};
+function incoming(id,d){call={id,d,video:d.video,role:"in",state:"inring",u:[]};call.rt=setInterval(()=>beep(660),1500);cui();watchU(d.caller)}
+A.acc=async()=>{const k=call;if(!k||k.state!="inring")return;const {id,d}=k;k.state="conn";clearInterval(k.rt);cui();
+ let st;try{st=await gm(d.video)}catch(e){toast("মাইক/ক্যামেরার অনুমতি দিন");return A.dec()}
+ if(call!==k)return;const pc=mkpc(st);k.pc=pc;k.st=st;cui();
+ try{await pc.setRemoteDescription(d.offer);await pc.setLocalDescription(await pc.createAnswer());await gat(pc);
+  await updateDoc(doc(db,"calls",id),{answer:{type:"answer",sdp:pc.localDescription.sdp},status:"accepted",st:Date.now()})}catch(e){stop("কল ধরা যায়নি");return}
+ k.u.push(onSnapshot(doc(db,"calls",id),s=>{const x=s.data();if(x&&["ended","missed"].includes(x.status))stop("কল শেষ")}));go()};
+A.dec=async()=>{if(!call)return;await updateDoc(doc(db,"calls",call.id),{status:"declined"}).catch(()=>{});stop("")};
+A.hang=async()=>{if(!call)return;const id=call.id,s=call.role=="out"&&call.state=="ring"?"missed":"ended";await updateDoc(doc(db,"calls",id),{status:s,et:Date.now()}).catch(()=>{});stop("কল শেষ")};
+function go(){if(!call)return;clearInterval(call.rt);clearTimeout(call.to);call.state="on";call.t0=Date.now();call.tm=setInterval(()=>{if(call)$("cst").textContent=df((Date.now()-call.t0)/1000)},500);cui()}
+function stop(msg){if(!call)return;[call.rt,call.tm,call.to].forEach(x=>{clearInterval(x);clearTimeout(x)});call.u.forEach(f=>f());if(call.st)call.st.getTracks().forEach(t=>t.stop());if(call.pc)call.pc.close();$("rv").srcObject=null;$("lv").srcObject=null;$("cst").textContent="";$("call").style.display="none";call=null;if(msg)toast(msg)}
+A.mu=b=>{const t=call&&call.st&&call.st.getAudioTracks()[0];if(!t)return;t.enabled=!t.enabled;b.textContent=t.enabled?"🎤":"🔇"};
+A.cm2=b=>{const t=call&&call.st&&call.st.getVideoTracks()[0];if(t){t.enabled=!t.enabled;b.textContent=t.enabled?"📷":"🚫"}};
+function cui(){const k=call;if(!k)return;const o=k.role=="out"?k.o:k.d.caller,u=U[o]||{},nm=u.name||(k.role=="out"?"":k.d.cn)||"কল";
  $("call").style.display="flex";$("cia").innerHTML=k.video?"":av(u.photo,nm,120);$("cn").textContent=nm;
  $("rv").style.display=k.video?"block":"none";$("lv").style.display=k.video&&k.st?"block":"none";if(k.st)$("lv").srcObject=k.st;
- $("cst").textContent=k.state=="ring"?"রিং হচ্ছে...":k.state=="inring"?(k.video?"ইনকামিং ভিডিও কল":"ইনকামিং অডিও কল"):"সংযুক্ত হচ্ছে...";
+ if(k.state!="on")$("cst").textContent=k.state=="ring"?"রিং হচ্ছে...":k.state=="inring"?(k.video?"ইনকামিং ভিডিও কল":"ইনকামিং অডিও কল"):"সংযুক্ত হচ্ছে...";
  $("cb").innerHTML=k.state=="inring"?`<button class=rd onclick="A.dec()">✕</button><button class=gr onclick="A.acc()">📞</button>`:k.state=="ring"?`<button class=rd onclick="A.hang()">✕</button>`:`<button onclick="A.mu(this)">🎤</button>${k.video?`<button onclick="A.cm2(this)">📷</button>`:""}<button class=rd onclick="A.hang()">✕</button>`}
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
