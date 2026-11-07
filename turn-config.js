@@ -1,4 +1,3 @@
-// Metered.ca থেকে পাওয়া মান এখানে বসান
-window.TURN_USER="আপনার_USERNAME";
-window.TURN_PASS="আপনার_CREDENTIAL";
-// window.TURN_HOST="global.relay.metered.ca"; // দরকার হলে
+window.TURN_USER="92c1c6b042a1da52fe3bbbb1";
+window.TURN_PASS="fCWiiRGxIdolGpYG";
+window.TURN_HOST="global.relay.metered.ca";
