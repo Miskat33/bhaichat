@@ -311,15 +311,15 @@ let hid=0;document.addEventListener("visibilitychange",()=>{if(document.hidden)h
 // ---------- অডিও/ভিডিও কল ----------
 const gm=v=>navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:v?{facingMode:"user"}:false});
 function mkpc(id,st,hold){const pc=new RTCPeerConnection(ICE());pc.hq=[];pc.hold=!!hold;pc.snd=c=>addDoc(collection(db,"calls",id,"cand"),{from:me.uid,c}).catch(e=>{if(call)call.se=e.code||"err"});pc.oniceconnectionstatechange=()=>{const x=pc.iceConnectionState;if(!call||call.pc!==pc)return;if(x=="failed"){try{pc.restartIce()}catch(e){}toast("সংযোগ হচ্ছে না — নেটওয়ার্ক বদলে দেখুন")}else if(x=="disconnected"){toast("নেটওয়ার্ক দুর্বল...")}};st.getTracks().forEach(t=>pc.addTrack(t,st));pc.ontrack=e=>{$("rv").srcObject=e.streams[0]};pc.ct={};pc.onicegatheringstatechange=()=>{if(pc.iceGatheringState=="complete")toast("কল টেস্ট: relay="+(pc.ct.relay||0)+" srflx="+(pc.ct.srflx||0)+" host="+(pc.ct.host||0))};pc.onicecandidate=e=>{if(!e.candidate)return;const m=/ typ (\w+)/.exec(e.candidate.candidate);if(m)pc.ct[m[1]]=(pc.ct[m[1]]||0)+1;const c=JSON.stringify(e.candidate);if(pc.hold)pc.hq.push(c);else pc.snd(c)};return pc}
-function wc(id,pc){call.pend=[];return onSnapshot(collection(db,"calls",id,"cand"),s=>s.docChanges().forEach(ch=>{if(ch.type!="added")return;const d=ch.doc.data();if(d.from==me.uid)return;const c=JSON.parse(d.c);call.rc=(call.rc||0)+1;if(pc.remoteDescription)pc.addIceCandidate(c).catch(()=>{});else call.pend.push(c)}))}
+function wc(id,pc){call.pend=[];return onSnapshot(collection(db,"calls",id,"cand"),s=>s.docChanges().forEach(ch=>{if(ch.type!="added")return;const d=ch.doc.data();if(d.from==me.uid)return;const c=JSON.parse(d.c);call.rc=(call.rc||0)+1;if(pc.remoteDescription)pc.addIceCandidate(c).catch(()=>{});else call.pend.push(c)}),e=>{if(call)call.se="L:"+(e.code||"err")})}
 async function fl(pc){for(const c of call.pend.splice(0))await pc.addIceCandidate(c).catch(()=>{})}
 A.cc=v=>{const c=chats[cur];if(!c)return;if(c.isGroup)A.gc(cur);else A.dial(ci(c).o,v)};
 A.dial=async(o,v)=>{if(call)return;if(!navigator.mediaDevices)return toast("এই ব্রাউজারে কল চলবে না");
  if((U[o]&&U[o].blocked&&U[o].blocked[me.uid])||(me.blocked&&me.blocked[o]))return toast("এই ব্যবহারকারীকে কল করা যাচ্ছে না");
  $("pg").style.display="none";let st;try{st=await gm(v)}catch(e){return toast("মাইক/ক্যামেরার অনুমতি দিন")}
  const id=doc(collection(db,"calls")).id,pc=mkpc(id,st,1);call={id,pc,st,video:!!v,role:"out",state:"ring",o,u:[]};cui();
- call.u.push(wc(id,pc));const of=await pc.createOffer();await pc.setLocalDescription(of);
- await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:of.type,sdp:of.sdp},ts:Date.now()});pc.hold=false;pc.hq.splice(0).forEach(c=>pc.snd(c));callPush([me.uid,o].sort().join("_"),v,0);
+ const of=await pc.createOffer();await pc.setLocalDescription(of);
+ await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:of.type,sdp:of.sdp},ts:Date.now()});call.u.push(wc(id,pc));pc.hold=false;pc.hq.splice(0).forEach(c=>pc.snd(c));callPush([me.uid,o].sort().join("_"),v,0);
  call.rt=ring(0);
  call.u.push(onSnapshot(doc(db,"calls",id),async s=>{const d=s.data();if(!d||!call||call.id!=id)return;if(d.answer&&!pc.remoteDescription){await pc.setRemoteDescription(d.answer);await fl(pc)}
   if(d.status=="accepted"&&call.state!="on")go();if(["ended","declined","missed"].includes(d.status))stop(d.status=="declined"?"কল প্রত্যাখ্যান করা হয়েছে":"কল শেষ")}));
