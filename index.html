@@ -238,14 +238,15 @@ A.ed=id=>{cm();ED={id,text:MS[id].text};RP=null;$("in").value=MS[id].text;rpUI()
 A.dm=id=>{cm();LH.push(id);localStorage.hm=JSON.stringify(LH);const e=$("m"+id);e&&e.remove()};
 A.da=async id=>{cm();try{await updateDoc(doc(db,"chats",cur,"messages",id),{del:true,text:"",audio:deleteField(),img:deleteField()})}catch(e){toast("মোছা যায়নি")}};
 let SRC=null;const src=(t,cb,fr)=>{SRC=[cb,fr];mod(`<h3>${t}</h3><button class=act onclick="A.sp(1)">📷 ক্যামেরা</button><button class=act onclick="A.sp(0)">🖼️ গ্যালারি</button><button class=act onclick="A.cm()">বন্ধ</button>`)};
-A.sp=c=>{cm();const [cb,fr]=SRC,f=$(c?"fc":"fi");if(c)f.setAttribute("capture",fr?"user":"environment");f.onchange=async e=>{const x=e.target.files[0];e.target.value="";if(!x)return;try{await cb(x)}catch(er){toast("সমস্যা: "+(er.code||er.message||""))}};f.click()};
+A.sp=c=>{cm();const [cb,fr]=SRC,f=$(c?"fc":"fi");if(c)f.setAttribute("capture",fr?"user":"environment");f.onchange=async e=>{const x=e.target.files[0];if(!x)return;try{await cb(x)}catch(er){toast("সমস্যা: "+(er.code||er.message||""))}finally{e.target.value=""}};f.click()};
 const rzm=async(f,mx,q)=>{const draw=(o,w,h)=>{const k=Math.min(1,mx/Math.max(w,h)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(o,0,0,c.width,c.height);return c},
  blk=c=>{try{const w=c.width,h=c.height,g=c.getContext("2d");let t=null;for(let y=0;y<10;y++)for(let x=0;x<10;x++){const d=g.getImageData(Math.min(w-1,Math.floor((x+.5)*w/10)),Math.min(h-1,Math.floor((y+.5)*h/10)),1,1).data,v=d[0]+d[1]+d[2];if(v>30&&v<735)return false;const w1=v>=735;if(t===null)t=w1;else if(t!==w1)return false}return true}catch(e){return false}},
  tries=[async()=>{const b=await createImageBitmap(f),c=draw(b,b.width,b.height);b.close&&b.close();return c},
  async()=>{const i=await new Promise((r,j)=>{const m=new Image();m.onload=()=>r(m);m.onerror=()=>j(0);m.src=URL.createObjectURL(f)}),c=draw(i,i.naturalWidth||i.width,i.naturalHeight||i.height);URL.revokeObjectURL(i.src);return c},
  async()=>{const b=await createImageBitmap(f,{resizeWidth:mx,resizeQuality:"low"}),c=draw(b,b.width,b.height);b.close&&b.close();return c}];
  for(const t of tries){try{const c=await t();if(!blk(c))return c.toDataURL("image/jpeg",q)}catch(e){}}
- throw new Error("ছবিটা পড়া যায়নি, অন্য ছবি দিন")};
+ if(f.size&&f.size<640000){try{const u=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>j(0);fr.readAsDataURL(f)});if(u&&u.length>100&&/^data:image/.test(u))return u}catch(e){}}
+ throw new Error("ছবিটা পড়া যায়নি ("+(f.type||"?")+", "+Math.round((f.size||0)/1024)+"KB)")};
 A.att=()=>src("ছবি পাঠান",async f=>{let q=.7,m=1000,d=await rzm(f,m,q);while(d.length>850000&&q>.3){q-=.15;m-=150;d=await rzm(f,m,q)}if(d.length>900000)return toast("ছবি অনেক বড়");await sendMsg({kind:"img",img:d},"📷 ছবি")});
 A.vi=u=>mod(`<img src="${u}" style="max-width:100%;max-height:75vh;border-radius:8px"><button class=act onclick="A.cm()">বন্ধ</button>`);
 A.gp=()=>src("গ্রুপের ছবি",async f=>{const p=await rz(f,200);await updateDoc(doc(db,"chats",cur),{photo:p});toast("গ্রুপের ছবি বদলানো হয়েছে");setTimeout(gi,400)});
