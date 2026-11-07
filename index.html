@@ -105,6 +105,7 @@ import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultiple
 
 const CFG={apiKey:"AIzaSyAKQ52fQQpKV4ScAX7gMXFEGQAk3YKt1m0",authDomain:"bhai-chat-76916.firebaseapp.com",projectId:"bhai-chat-76916",storageBucket:"bhai-chat-76916.firebasestorage.app",messagingSenderId:"1039989161381",appId:"1:1039989161381:web:921377ee697c6482217c4c"};
 const app=initializeApp(CFG),auth=getAuth(app);let db;
+const VAPID="BHTlT9lnI33w8Lg0l7ZUYCwQgLtsayolQqWeic4o2I86hdqNQIW59thsuL-rNyzAcHKcltMRAhUZSKaTLOny04g",PUSH_URL="https://bhai-push.miskat168453.workers.dev";
 try{db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){db=getFirestore(app)}
 const $=i=>document.getElementById(i),A={};window.A=A;
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -130,7 +131,16 @@ const ring=inc=>{const p=()=>{try{if(inc){[[659,0],[784,.18],[988,.36],[784,.54]
 function ntfy(t,b,tag,cl){if(document.visibilityState=="visible"){if(!cl)toast("💬 "+t+": "+b);return}
  try{if(window.Notification&&Notification.permission=="granted")navigator.serviceWorker.getRegistration().then(r=>r&&r.showNotification(t,{body:b,tag,icon:"icon-192.png",badge:"icon-192.png",vibrate:cl?[600,300,600,300,600]:[200,100,200],renotify:true,requireInteraction:!!cl}))}catch(e){}}
 function ntf(s){if(nfR)s.docChanges().forEach(ch=>{if(ch.type!="modified")return;const c=ch.doc.data(),id=ch.doc.id,p=chats[id];if(!p||c.lastFrom==me.uid||(c.lastTs||0)<=(p.lastTs||0))return;if(me.blocked&&me.blocked[c.lastFrom])return;if(cur==id&&document.visibilityState=="visible")return;beep(900);ntfy(ci(c).n,(c.isGroup&&c.lastName?c.lastName+": ":"")+(c.lastText||""),"m"+id)});nfR=1}
-document.addEventListener("click",()=>{if(me&&window.Notification&&Notification.permission=="default")Notification.requestPermission()},true);
+document.addEventListener("click",()=>{if(me&&window.Notification&&Notification.permission=="default")Notification.requestPermission().then(()=>regPush())},true);
+async function regPush(){try{
+ if(!me||!window.Notification||Notification.permission!="granted"||!("serviceWorker" in navigator))return;
+ const m=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
+ if(!(await m.isSupported()))return;
+ const reg=await navigator.serviceWorker.ready;
+ const k=await m.getToken(m.getMessaging(app),{vapidKey:VAPID,serviceWorkerRegistration:reg});
+ if(k){localStorage.setItem("fcmTok",k);await updateDoc(doc(db,"users",me.uid),{fcmTokens:arrayUnion(k)})}
+}catch(e){console.warn("push",e)}}
+async function pushN(id){try{if(PUSH_URL.indexOf("http")!=0||!auth.currentUser)return;const k=await auth.currentUser.getIdToken();fetch(PUSH_URL,{method:"POST",headers:{"Authorization":"Bearer "+k,"Content-Type":"application/json"},body:JSON.stringify({chat:id})}).catch(()=>{})}catch(e){}}
 const rpUI=()=>{const r=ED?"✎ এডিট: "+ED.text:RP?"↩️ "+RP.fn+": "+RP.text:"";$("rp").style.display=r?"flex":"none";$("rpt").textContent=r};
 
 // ---------- লগইন ----------
@@ -138,14 +148,14 @@ A.sw=n=>{$("f1").style.display=n?"none":"contents";$("f2").style.display=n?"flex
 A.login=async()=>{const u=cl($("li").value);if(!okId(u))return $("er").textContent="সঠিক আইডি দিন";try{await signInWithEmailAndPassword(auth,u+"@vaichat.app",$("lp").value)}catch(e){$("er").textContent=emsg(e)}};
 A.reg=async()=>{const u=cl($("si").value),n=$("sn").value.trim();if(!n)return $("er").textContent="নাম লিখুন";if(!okId(u))return $("er").textContent="আইডি ৩-২০ অক্ষর (ইংরেজি ছোট অক্ষর, সংখ্যা, _)";reg=true;
  try{const c=await createUserWithEmailAndPassword(auth,u+"@vaichat.app",$("sp").value);await setDoc(doc(db,"users",c.user.uid),{username:u,name:n,about:"হ্যালো! আমি ভাই চ্যাট ব্যবহার করছি"});reg=false;boot(c.user)}catch(e){reg=false;$("er").textContent=emsg(e)}};
-A.out=()=>{if(confirm("লগআউট করবেন?"))signOut(auth)};
+A.out=async()=>{if(!confirm("লগআউট করবেন?"))return;try{const k=localStorage.getItem("fcmTok");if(k&&me)await updateDoc(doc(db,"users",me.uid),{fcmTokens:arrayRemove(k)});localStorage.removeItem("fcmTok")}catch(e){}signOut(auth)};
 onAuthStateChanged(auth,u=>{if(reg)return;if(u)boot(u);else{me=null;[unC,unM].forEach(f=>f&&f());show("auth")}});
 
 function watchU(uid){if(uw[uid])return;uw[uid]=onSnapshot(doc(db,"users",uid),s=>{if(s.exists()){U[uid]={uid,...s.data()};if(me&&uid==me.uid){me=U[uid];rs()}ui()}})}
 function ui(){rl();rc();if(cur)hdr()}
 async function boot(u){
  me={uid:u.uid,username:u.email.split("@")[0],name:u.email.split("@")[0]};U[u.uid]=me;watchU(u.uid);
- show("main");tabTo("tc");rs();
+ show("main");tabTo("tc");rs();regPush();
  unC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),s=>{ntf(s);chats={};s.forEach(x=>chats[x.id]=x.data());Object.values(chats).forEach(c=>{if(!c.isGroup)watchU(c.members.find(x=>x!==me.uid))});rl();if(cur){hdr();tk()}},e=>toast("লোড হচ্ছে না: "+e.code));
  ["caller","callee"].forEach(f=>onSnapshot(query(collection(db,"calls"),where(f,"==",me.uid)),s=>{
   s.docChanges().forEach(ch=>{const d=ch.doc.data(),id=ch.doc.id;CALLS[id]=d;const o=d.caller==me.uid?d.callee:d.caller;watchU(o);
@@ -183,15 +193,15 @@ A.oc=id=>{if(Date.now()-lpF<700)return;cur=id;$("msgs").innerHTML="";hdr();show(
   L.scrollTop=L.scrollHeight;first=false;tk();mark()})};
 function htm(id,m,mine,g){MS[id]=m;const d=document.createElement("div");d.id="m"+id;d.className="b "+(mine?"me":"ot");d.dataset.id=id;
  let body;if(m.del)body="<i style='opacity:.6'>🚫 মেসেজটি মুছে ফেলা হয়েছে</i>";else if(m.kind=="voice"){AD[id]=m.audio;body=`<div class=vo><button onclick="A.pv(this,'${id}')">▶</button><span>🎤 ${df(m.dur)}</span></div>`}else if(m.kind=="img"){body=`<img class=pi src="${m.img}" onclick="A.vi(this.src)">`}else body=esc(m.text);
- d.innerHTML=(g&&!mine?`<div class=sn>${esc(m.fn)}</div>`:"")+(m.fw&&!m.del?`<div class=sb style="font-size:12px;font-style:italic">➡️ ফরওয়ার্ড করা</div>`:"")+(m.rt&&!m.del?`<div class=rq data-r="${m.rt.id}">${esc(m.rt.fn)}: ${esc(m.rt.text)}</div>`:"")+body+`<div class=t>${m.ed&&!m.del?"সম্পাদিত ":""}${fmt(m.ts)} ${mine&&!g?`<span class="tk" data-ts="${m.ts}">✓</span>`:""}</div>`;return d}
+ d.innerHTML=(g&&!mine?`<div class=sn>${esc(m.fn)}</div>`:"")+(m.rt&&!m.del?`<div class=rq data-r="${m.rt.id}">${esc(m.rt.fn)}: ${esc(m.rt.text)}</div>`:"")+body+`<div class=t>${m.ed&&!m.del?"সম্পাদিত ":""}${fmt(m.ts)} ${mine&&!g?`<span class="tk" data-ts="${m.ts}">✓</span>`:""}</div>`;return d}
 function tk(){const c=chats[cur];if(!c||c.isGroup)return;const o=c.members.find(x=>x!==me.uid),s=c.seen&&c.seen[o]||0;document.querySelectorAll(".tk").forEach(e=>{if(s>=+e.dataset.ts){e.textContent="✓✓";e.classList.add("sn")}})}
 function mark(){if(!cur||document.visibilityState!="visible")return;const u={};u["seen."+me.uid]=Date.now();u["unread."+me.uid]=0;updateDoc(doc(db,"chats",cur),u).catch(()=>{})}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")mark()});
 window.addEventListener("popstate",()=>{if($("md").style.display=="flex")cm();else if($("pg").style.display=="flex")$("pg").style.display="none";else if(cur){cur=null;if(unM){unM();unM=null}if(A.pa){A.pa.pause()}show("main")}});
-async function sendMsg(x,last,cid){const k=cid||cur,c=chats[k];if(!c)return;
+async function sendMsg(x,last){const cid=cur,c=chats[cur];if(!c)return;
  if(!c.isGroup){const o=c.members.find(y=>y!==me.uid);if(U[o]&&U[o].blocked&&U[o].blocked[me.uid])return toast("এই ব্যবহারকারীকে মেসেজ পাঠানো যাচ্ছে না");if(me.blocked&&me.blocked[o])return toast("আগে আনব্লক করুন")}
- const ts=Date.now();await addDoc(collection(db,"chats",k,"messages"),{from:me.uid,fn:me.name,ts,...x});
- const up={lastText:last,lastTs:ts,lastFrom:me.uid,lastName:me.name};c.members.forEach(y=>{up["hid."+y]=deleteField();if(y!=me.uid)up["unread."+y]=increment(1)});await updateDoc(doc(db,"chats",k),up)}
+ const ts=Date.now();await addDoc(collection(db,"chats",cur,"messages"),{from:me.uid,fn:me.name,ts,...x});
+ const up={lastText:last,lastTs:ts,lastFrom:me.uid,lastName:me.name};c.members.forEach(y=>{up["hid."+y]=deleteField();if(y!=me.uid)up["unread."+y]=increment(1)});await updateDoc(doc(db,"chats",cur),up);pushN(cid)}
 function bar(){$("bar").style.display="flex";$("rb").style.display="none";$("in").value="";ic()}
 const ic=()=>$("go").textContent=$("in").value.trim()?"➤":"🎤";
 $("in").oninput=ic;
@@ -209,19 +219,12 @@ function lp(el,sel,fn){let t=null,x=0,y=0;const f=b=>{if($("md").style.display!=
  ["touchend","touchcancel"].forEach(n=>el.addEventListener(n,()=>clearTimeout(t)));
  el.addEventListener("contextmenu",e=>{const b=e.target.closest(sel);if(b){e.preventDefault();f(b)}})}
 lp(M,".b",b=>{const id=b.dataset.id,m=MS[id];if(!m)return;const mine=m.from==me.uid;let h="";
- if(!m.del){h+=`<button class=act onclick="A.rp('${id}')">↩️ রিপ্লাই</button>`;h+=`<button class=act onclick="A.fw('${id}')">➡️ ফরওয়ার্ড</button>`;if(m.kind=="text"&&m.text)h+=`<button class=act onclick="A.cp('${id}')">📋 কপি</button>`;if(mine&&m.kind=="text")h+=`<button class=act onclick="A.ed('${id}')">✎ এডিট</button>`}
+ if(!m.del){h+=`<button class=act onclick="A.rp('${id}')">↩️ রিপ্লাই</button>`;if(m.kind=="text"&&m.text)h+=`<button class=act onclick="A.cp('${id}')">📋 কপি</button>`;if(mine&&m.kind=="text")h+=`<button class=act onclick="A.ed('${id}')">✎ এডিট</button>`}
  h+=`<button class=act onclick="A.dm('${id}')">🗑️ শুধু আমার কাছ থেকে মুছুন</button>`;if(mine&&!m.del)h+=`<button class=act onclick="A.da('${id}')">🚫 সবার জন্য মুছুন</button>`;
  mod(`<h3>মেসেজ</h3>${h}<button class=act onclick="A.cm()">বন্ধ</button>`)});
 lp($("list"),".it",b=>{const id=b.dataset.id,c=chats[id];if(!c)return;mod(`<h3>${esc(ci(c).n)}</h3><button class=act onclick="A.dc('${id}')">${c.isGroup?"🚪 গ্রুপ ছাড়ুন":"🗑️ চ্যাট মুছুন"}</button><button class=act onclick="A.cm()">বন্ধ</button>`)});
 M.addEventListener("click",e=>{const q=e.target.closest(".rq");if(q){const t=$("m"+q.dataset.r);t&&t.scrollIntoView({behavior:"smooth",block:"center"})}});
 A.rp=id=>{cm();const m=MS[id];RP={id,fn:m.fn,text:m.kind=="voice"?"🎤 ভয়েস":m.kind=="img"?"📷 ছবি":m.text};ED=null;rpUI();$("in").focus()};
-A.fw=id=>{const m=MS[id];if(!m)return;FW=m;const l=Object.keys(chats).filter(k=>!(chats[k].hid&&chats[k].hid[me.uid])).map(k=>`<button class=act onclick="A.fs('${k}')">${esc(ci(chats[k]).n)}</button>`).join("");mod(`<h3>কাকে ফরওয়ার্ড করবেন?</h3><div style="max-height:50vh;overflow:auto">${l||"<div class=sb>কোনো চ্যাট নেই</div>"}</div><button class=act onclick="A.cm()">বন্ধ</button>`)};
-let FW=null;
-A.fs=async k=>{cm();const m=FW;if(!m)return;const x={kind:m.kind,fw:true};if(m.kind=="text")x.text=m.text;else if(m.kind=="voice"){x.audio=m.audio;x.dur=m.dur}else if(m.kind=="img")x.img=m.img;else return toast("এটা ফরওয়ার্ড করা যায় না");try{await sendMsg(x,m.kind=="text"?m.text:m.kind=="voice"?"🎤 ভয়েস":"📷 ছবি",k);toast("ফরওয়ার্ড হয়েছে")}catch(e){toast("পাঠানো যায়নি")}};
-const WP={n:"",g1:"linear-gradient(160deg,#0a1929,#14508f)",g2:"linear-gradient(160deg,#1a110e,#6d4c41)",g3:"linear-gradient(160deg,#000,#1e88e5 140%)",g4:"linear-gradient(160deg,#102a1f,#0b0f14)"};
-const wpA=()=>{const v=localStorage.wp||"",e=$("msgs");if(!e)return;e.style.background=v=="img"?`center/cover url(${localStorage.wpi||""})`:WP[v]||"var(--bg)"};
-A.wp=k=>{if(k=="img")return src("চ্যাট ব্যাকগ্রাউন্ড",async f=>{const d=await rzm(f,900,.6);try{localStorage.wpi=d;localStorage.wp="img";wpA();toast("ব্যাকগ্রাউন্ড বদলেছে")}catch(e){toast("ছবি অনেক বড়")}});localStorage.wp=k;wpA();toast("ব্যাকগ্রাউন্ড বদলেছে")};
-wpA();
 A.rx=()=>{if(ED)$("in").value="";RP=ED=null;rpUI();ic()};
 A.cp=id=>{cm();const t=MS[id].text,fb=()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");toast("কপি হয়েছে")}catch(e){}a.remove()};navigator.clipboard?navigator.clipboard.writeText(t).then(()=>toast("কপি হয়েছে")).catch(fb):fb()};
 A.ed=id=>{cm();ED={id,text:MS[id].text};RP=null;$("in").value=MS[id].text;rpUI();ic();$("in").focus()};
@@ -238,7 +241,7 @@ A.dc=async id=>{cm();const c=chats[id];if(!c)return;if(!confirm(c.isGroup?"গ�
  try{if(c.isGroup)await updateDoc(doc(db,"chats",id),{members:arrayRemove(me.uid)});else await updateDoc(doc(db,"chats",id),{["hid."+me.uid]:true,["clr."+me.uid]:Date.now()});if(cur==id)exitChat();toast(c.isGroup?"গ্রুপ ছেড়েছেন":"চ্যাট মুছে গেছে")}catch(e){toast("করা যায়নি: "+(e.code||""))}};
 A.dcu=uid=>A.dc([me.uid,uid].sort().join("_"));
 A.rm=async id=>{if(!confirm("সদস্যকে সরাবেন?"))return;try{await updateDoc(doc(db,"chats",cur),{members:arrayRemove(id)});toast("সরানো হয়েছে");setTimeout(gi,400)}catch(e){toast("করা যায়নি: "+(e.code||""))}};
-A.nt=async()=>{if(!window.Notification)return toast("এই ব্রাউজারে নোটিফিকেশন নেই");const r=await Notification.requestPermission();toast(r=="granted"?"নোটিফিকেশন চালু হয়েছে":"বন্ধ আছে — ব্রাউজার সেটিংস থেকে চালু করুন");rs()};
+A.nt=async()=>{if(!window.Notification)return toast("এই ব্রাউজারে নোটিফিকেশন নেই");const r=await Notification.requestPermission();if(r=="granted")regPush();toast(r=="granted"?"নোটিফিকেশন চালু হয়েছে":"বন্ধ আছে — ব্রাউজার সেটিংস থেকে চালু করুন");rs()};
 A.pv=(b,id)=>{if(A.pa&&A.pi==id&&!A.pa.paused){A.pa.pause();return}if(A.pa)A.pa.pause();document.querySelectorAll(".vo button").forEach(x=>x.textContent="▶");const a=new Audio(AD[id]);A.pa=a;A.pi=id;a.onplay=()=>b.textContent="⏸";a.onpause=a.onended=()=>b.textContent="▶";a.play().catch(()=>toast("চালানো যায়নি"))};
 // ভয়েস রেকর্ড
 let R=null,RC=[],RT=0,RI=0,RX=0;
@@ -279,7 +282,7 @@ function stopScan(){scanning=false;if(stream){stream.getTracks().forEach(t=>t.st
 function rs(){if(!me)return;const u=me;$("ts").innerHTML=`<div class=it onclick="A.me()">${av(u.photo,u.name,64)}<div class=m><b style="font-size:18px">${esc(u.name)}</b><div class=sb>${esc(u.about||"")}</div><div class=sb>@${esc(u.username)}</div></div><span style="font-size:22px" onclick="event.stopPropagation();A.qr()">▦</span></div>
 <div class=st>থিম</div><div class=row style="padding:8px 14px"><button class=ro onclick="A.th('a')" style="font-size:14px">🔵<small>নীল-কালো</small></button><button class=ro onclick="A.th('b')" style="font-size:14px">🟤<small>চকলেট</small></button><button class=ro onclick="A.th('c')" style="font-size:14px">⚪<small>হালকা</small></button></div>
 <div class=st>নোটিফিকেশন</div><div class=li onclick="A.nt()">🔔<div class=m>নোটিফিকেশন ও রিং<div class=sb>${window.Notification&&Notification.permission=="granted"?"চালু আছে":"বন্ধ — চাপ দিয়ে চালু করুন"}</div></div></div>
-<div class=st>চ্যাট ব্যাকগ্রাউন্ড</div><div class=row style="padding:8px 14px;flex-wrap:wrap;gap:6px"><button class=ro onclick="A.wp('n')" style="font-size:14px">⬛<small>সাধারণ</small></button><button class=ro onclick="A.wp('g1')" style="font-size:14px">🔵<small>নীল</small></button><button class=ro onclick="A.wp('g2')" style="font-size:14px">🟤<small>চকলেট</small></button><button class=ro onclick="A.wp('g3')" style="font-size:14px">🌌<small>রাত</small></button><button class=ro onclick="A.wp('g4')" style="font-size:14px">🌿<small>সবুজ</small></button><button class=ro onclick="A.wp('img')" style="font-size:14px">🖼️<small>নিজের ছবি</small></button></div><div class=st>নিরাপত্তা</div><div class=li onclick="A.lk()">🔒<div class=m>অ্যাপ লক (ক্যালকুলেটর ছদ্মবেশে)<div class=sb>${localStorage.pin?"চালু আছে":"বন্ধ"}</div></div></div>
+<div class=st>নিরাপত্তা</div><div class=li onclick="A.lk()">🔒<div class=m>অ্যাপ লক (ক্যালকুলেটর ছদ্মবেশে)<div class=sb>${localStorage.pin?"চালু আছে":"বন্ধ"}</div></div></div>
 <div class=li onclick="A.bll()">🚫<div class=m>ব্লক করা তালিকা</div></div>
 <div class=st>অ্যাকাউন্ট</div><div class=li onclick="A.out()">⏻<div class=m>লগআউট</div></div>`}
 A.th=t=>{localStorage.th=t;document.documentElement.dataset.th=t;document.querySelector("meta[name=theme-color]").content={a:"#0a1929",b:"#3e2723",c:"#0d47a1"}[t]};
