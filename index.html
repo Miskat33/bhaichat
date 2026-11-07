@@ -64,6 +64,12 @@ nav button small{font-size:11px}nav button.on{color:#fff;box-shadow:inset 0 3px 
 .pi{max-width:100%;max-height:260px;border-radius:8px;display:block}
 #rp{display:none;align-items:center;gap:8px;padding:6px 12px;background:var(--cd);font-size:13px;border-left:3px solid var(--p)}#rp span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .act{width:100%;padding:13px;border:none;border-radius:10px;background:var(--ot);font-size:16px;text-align:left}
+.fl{display:flex;gap:8px;padding:2px 12px 8px;overflow-x:auto}.fl button{border:1px solid var(--bd);background:none;border-radius:18px;padding:6px 14px;font-size:14px;white-space:nowrap;color:var(--sb)}.fl button.on{background:var(--p);color:#fff;border-color:var(--p)}
+.rxs{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}.rxs span{background:#0004;border-radius:10px;padding:1px 6px;font-size:13px}
+.em3{display:flex;justify-content:space-around;font-size:28px;width:100%}
+.clamp{max-height:9.5em;overflow:hidden}.rmr{color:#4fc3f7;font-size:13px}
+#cs2{display:none;padding:6px 10px;background:var(--cd)}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}.mg img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}
 </style></head><body>
 
 <div id="auth" class="sc">
@@ -78,14 +84,14 @@ nav button small{font-size:11px}nav button.on{color:#fff;box-shadow:inset 0 3px 
 
 <div id="main" class="sc">
 <div class="hd"><b>ভাই চ্যাট</b><span id="net"></span></div>
-<div id="tc" class="tab"><div class="sr"><input id="q" placeholder="🔍 চ্যাট খুঁজুন"></div><div id="list"></div></div>
+<div id="tc" class="tab"><div class="sr"><input id="q" placeholder="🔍 চ্যাট খুঁজুন"></div><div class="fl" id="fl"></div><div id="list"></div></div>
 <div id="tl" class="tab"><div id="cl"></div></div><div id="ts" class="tab"></div>
 <button id="fab" onclick="A.add()">＋</button>
 <nav><button data-t="tc">💬<small>চ্যাট</small></button><button data-t="tl">📞<small>কল</small></button><button data-t="ts">⚙️<small>সেটিংস</small></button></nav></div>
 
 <div id="chat" class="sc">
-<div class="hd"><button class="ib" onclick="history.back()">←</button><div id="cav" onclick="A.ch()"></div><b onclick="A.ch()"><span id="ct"></span><small id="cs"></small></b><button class="ib" id="c1" onclick="A.cc(0)">📞</button><button class="ib" id="c2" onclick="A.cc(1)">🎥</button></div>
-<div id="msgs"></div>
+<div class="hd"><button class="ib" onclick="history.back()">←</button><div id="cav" onclick="A.ch()"></div><b onclick="A.ch()"><span id="ct"></span><small id="cs"></small></b><button class="ib" id="c1" onclick="A.cc(0)">📞</button><button class="ib" id="c2" onclick="A.cc(1)">🎥</button><button class="ib" onclick="A.cmn()">⋮</button></div>
+<div id="cs2"><input class="fi" id="csi" placeholder="🔍 মেসেজ খুঁজুন"></div><div id="msgs"></div>
 <div id="rp"><span id="rpt"></span><button class="ib" onclick="A.rx()">✕</button></div><div id="bar"><button class="cb" style="background:var(--ot)" onclick="A.att()">📎</button><textarea id="in" rows="1" maxlength="1000" placeholder="মেসেজ লিখুন"></textarea><button class="cb" id="go">🎤</button></div>
 <div id="rb"><button class="cb" style="background:#c62828" onclick="A.rs(1)">✕</button><div id="rt"></div><button class="cb" onclick="A.rs(0)">➤</button></div></div>
 
@@ -130,7 +136,7 @@ const ring=inc=>{const p=()=>{try{if(inc){[[659,0],[784,.18],[988,.36],[784,.54]
 ["touchstart","click"].forEach(e=>document.addEventListener(e,()=>{try{AC()}catch(x){}},{once:true}));
 function ntfy(t,b,tag,cl){if(document.visibilityState=="visible"){if(!cl)toast("💬 "+t+": "+b);return}
  try{if(window.Notification&&Notification.permission=="granted")navigator.serviceWorker.getRegistration().then(r=>r&&r.showNotification(t,{body:b,tag,icon:"icon-192.png",badge:"icon-192.png",vibrate:cl?[600,300,600,300,600]:[200,100,200],renotify:true,requireInteraction:!!cl}))}catch(e){}}
-function ntf(s){if(nfR)s.docChanges().forEach(ch=>{if(ch.type!="modified")return;const c=ch.doc.data(),id=ch.doc.id,p=chats[id];if(!p||c.lastFrom==me.uid||(c.lastTs||0)<=(p.lastTs||0))return;if(me.blocked&&me.blocked[c.lastFrom])return;if(cur==id&&document.visibilityState=="visible")return;beep(900);ntfy(ci(c).n,(c.isGroup&&c.lastName?c.lastName+": ":"")+(c.lastText||""),"m"+id)});nfR=1}
+function ntf(s){if(nfR)s.docChanges().forEach(ch=>{if(ch.type!="modified")return;const c=ch.doc.data(),id=ch.doc.id,p=chats[id];if(!p||c.lastFrom==me.uid||(c.lastTs||0)<=(p.lastTs||0))return;if(me.blocked&&me.blocked[c.lastFrom])return;if(c.mute&&c.mute[me.uid])return;if(cur==id&&document.visibilityState=="visible")return;beep(900);ntfy(ci(c).n,(c.isGroup&&c.lastName?c.lastName+": ":"")+(c.lastText||""),"m"+id)});nfR=1}
 document.addEventListener("click",()=>{if(me&&window.Notification&&Notification.permission=="default")Notification.requestPermission().then(()=>regPush())},true);
 async function regPush(){try{
  if(!me||!window.Notification||Notification.permission!="granted"||!("serviceWorker" in navigator))return;
@@ -155,7 +161,7 @@ function watchU(uid){if(uw[uid])return;uw[uid]=onSnapshot(doc(db,"users",uid),s=
 function ui(){rl();rc();if(cur)hdr()}
 async function boot(u){
  me={uid:u.uid,username:u.email.split("@")[0],name:u.email.split("@")[0]};U[u.uid]=me;watchU(u.uid);
- show("main");tabTo("tc");rs();regPush();
+ show("main");tabTo("tc");rs();regPush();pres();flUI();
  unC=onSnapshot(query(collection(db,"chats"),where("members","array-contains",me.uid)),s=>{ntf(s);chats={};s.forEach(x=>chats[x.id]=x.data());Object.values(chats).forEach(c=>{if(!c.isGroup)watchU(c.members.find(x=>x!==me.uid))});rl();if(cur){hdr();tk()}},e=>toast("লোড হচ্ছে না: "+e.code));
  ["caller","callee"].forEach(f=>onSnapshot(query(collection(db,"calls"),where(f,"==",me.uid)),s=>{
   s.docChanges().forEach(ch=>{const d=ch.doc.data(),id=ch.doc.id;CALLS[id]=d;const o=d.caller==me.uid?d.callee:d.caller;watchU(o);
@@ -170,11 +176,11 @@ window.addEventListener("online",()=>$("net").textContent="");window.addEventLis
 function tabTo(t){["tc","tl","ts"].forEach(x=>$(x).style.display=x==t?"block":"none");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("fab").style.display=t=="tc"?"block":"none"}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tabTo(b.dataset.t));
 $("q").oninput=rl;
-const ci=c=>{if(c.isGroup)return{g:1,n:c.name,p:c.photo,s:c.members.length+" জন সদস্য"};const o=c.members.find(x=>x!==me.uid),u=U[o]||(c.users&&c.users[o])||{};return{g:0,o,n:u.name||"?",p:u.photo,s:"@"+(u.username||"")}};
+const ci=c=>{if(c.isGroup)return{g:1,n:c.name,p:c.photo,s:c.members.length+" জন সদস্য"};const o=c.members.find(x=>x!==me.uid),u=U[o]||(c.users&&c.users[o])||{};return{g:0,o,n:u.name||"?",p:u.photo,s:pres2(u)}};
 function rl(){if(!me)return;const q=($("q").value||"").trim().toLowerCase();
- const ids=Object.keys(chats).filter(id=>!(chats[id].hid&&chats[id].hid[me.uid])&&(!q||ci(chats[id]).n.toLowerCase().includes(q))).sort((a,b)=>(chats[b].lastTs||0)-(chats[a].lastTs||0));
+ const ids=Object.keys(chats).filter(id=>!(chats[id].hid&&chats[id].hid[me.uid])&&(!q||ci(chats[id]).n.toLowerCase().includes(q))&&fltOk(chats[id])).sort((a,b)=>pn(chats[b])-pn(chats[a])||(chats[b].lastTs||0)-(chats[a].lastTs||0));
  $("list").innerHTML=ids.length?ids.map(id=>{const c=chats[id],i=ci(c),n=c.unread&&c.unread[me.uid]||0,pre=c.lastFrom==me.uid?"আপনি: ":(c.isGroup&&c.lastName?c.lastName+": ":"");
-  return`<div class=it data-id="${id}" onclick="A.oc('${id}')">${av(i.p,i.n,52,i.g)}<div class=m><div class=r><b>${esc(i.n)}</b><small class="${n?"un":""}">${fmt(c.lastTs)}</small></div><div class=r><span class=ll>${esc(c.lastText?pre+c.lastText:i.s)}</span>${n?`<span class=bg>${n}</span>`:""}</div></div></div>`}).join(""):`<div class=em>এখনো কোনো চ্যাট নেই।<br>নিচের ＋ চেপে বন্ধু অ্যাড করুন বা গ্রুপ খুলুন।</div>`}
+  return`<div class=it data-id="${id}" onclick="A.oc('${id}')">${av(i.p,i.n,52,i.g)}<div class=m><div class=r><b>${esc(i.n)}${c.pin&&c.pin[me.uid]?" 📌":""}${c.mute&&c.mute[me.uid]?" 🔕":""}</b><small class="${n?"un":""}">${fmt(c.lastTs)}</small></div><div class=r><span class=ll>${esc(c.lastText?pre+c.lastText:i.s)}</span>${n?`<span class=bg>${n}</span>`:""}</div></div></div>`}).join(""):`<div class=em>এখনো কোনো চ্যাট নেই।<br>নিচের ＋ চেপে বন্ধু অ্যাড করুন বা গ্রুপ খুলুন।</div>`}
 
 // ---------- কল তালিকা ----------
 function rc(){if(!me)return;const ids=Object.keys(CALLS).sort((a,b)=>CALLS[b].ts-CALLS[a].ts);
@@ -192,7 +198,7 @@ A.oc=id=>{if(Date.now()-lpF<700)return;cur=id;$("msgs").innerHTML="";hdr();show(
    else if(ch.type=="modified"){const e=$("m"+mid);if(e)e.replaceWith(htm(mid,m,mine,g))}});
   L.scrollTop=L.scrollHeight;first=false;tk();mark()})};
 function htm(id,m,mine,g){MS[id]=m;const d=document.createElement("div");d.id="m"+id;d.className="b "+(mine?"me":"ot");d.dataset.id=id;
- let body;if(m.del)body="<i style='opacity:.6'>🚫 মেসেজটি মুছে ফেলা হয়েছে</i>";else if(m.kind=="voice"){AD[id]=m.audio;body=`<div class=vo><button onclick="A.pv(this,'${id}')">▶</button><span>🎤 ${df(m.dur)}</span></div>`}else if(m.kind=="img"){body=`<img class=pi src="${m.img}" onclick="A.vi(this.src)">`}else body=esc(m.text);
+ let body;if(m.del)body="<i style='opacity:.6'>🚫 মেসেজটি মুছে ফেলা হয়েছে</i>";else if(m.kind=="voice"){AD[id]=m.audio;body=`<div class=vo><button onclick="A.pv(this,'${id}')">▶</button><span>🎤 ${df(m.dur)}</span></div>`}else if(m.kind=="img"){body=`<img class=pi src="${m.img}" onclick="A.vi(this.src)">`}else body=lkf(m.text);
  d.innerHTML=(g&&!mine?`<div class=sn>${esc(m.fn)}</div>`:"")+(m.rt&&!m.del?`<div class=rq data-r="${m.rt.id}">${esc(m.rt.fn)}: ${esc(m.rt.text)}</div>`:"")+body+`<div class=t>${m.ed&&!m.del?"সম্পাদিত ":""}${fmt(m.ts)} ${mine&&!g?`<span class="tk" data-ts="${m.ts}">✓</span>`:""}</div>`;return d}
 function tk(){const c=chats[cur];if(!c||c.isGroup)return;const o=c.members.find(x=>x!==me.uid),s=c.seen&&c.seen[o]||0;document.querySelectorAll(".tk").forEach(e=>{if(s>=+e.dataset.ts){e.textContent="✓✓";e.classList.add("sn")}})}
 function mark(){if(!cur||document.visibilityState!="visible")return;const u={};u["seen."+me.uid]=Date.now();u["unread."+me.uid]=0;updateDoc(doc(db,"chats",cur),u).catch(()=>{})}
@@ -219,10 +225,10 @@ function lp(el,sel,fn){let t=null,x=0,y=0;const f=b=>{if($("md").style.display!=
  ["touchend","touchcancel"].forEach(n=>el.addEventListener(n,()=>clearTimeout(t)));
  el.addEventListener("contextmenu",e=>{const b=e.target.closest(sel);if(b){e.preventDefault();f(b)}})}
 lp(M,".b",b=>{const id=b.dataset.id,m=MS[id];if(!m)return;const mine=m.from==me.uid;let h="";
- if(!m.del){h+=`<button class=act onclick="A.rp('${id}')">↩️ রিপ্লাই</button>`;if(m.kind=="text"&&m.text)h+=`<button class=act onclick="A.cp('${id}')">📋 কপি</button>`;if(mine&&m.kind=="text")h+=`<button class=act onclick="A.ed('${id}')">✎ এডিট</button>`}
+ if(!m.del){h+=`<div class=em3>${["❤️","👍","😂","😮","😢","🙏"].map(e=>`<span onclick="A.rx2('${id}','${e}')">${e}</span>`).join("")}</div><button class=act onclick="A.rp('${id}')">↩️ রিপ্লাই</button><button class=act onclick="A.fw('${id}')">↪️ ফরওয়ার্ড</button><button class=act onclick="A.sr2('${id}')">${ST[id]?"☆ তারকা সরান":"⭐ তারকা দিন"}</button>`;if(m.kind=="text"&&m.text)h+=`<button class=act onclick="A.cp('${id}')">📋 কপি</button>`;if(mine&&m.kind=="text")h+=`<button class=act onclick="A.ed('${id}')">✎ এডিট</button>`}
  h+=`<button class=act onclick="A.dm('${id}')">🗑️ শুধু আমার কাছ থেকে মুছুন</button>`;if(mine&&!m.del)h+=`<button class=act onclick="A.da('${id}')">🚫 সবার জন্য মুছুন</button>`;
  mod(`<h3>মেসেজ</h3>${h}<button class=act onclick="A.cm()">বন্ধ</button>`)});
-lp($("list"),".it",b=>{const id=b.dataset.id,c=chats[id];if(!c)return;mod(`<h3>${esc(ci(c).n)}</h3><button class=act onclick="A.dc('${id}')">${c.isGroup?"🚪 গ্রুপ ছাড়ুন":"🗑️ চ্যাট মুছুন"}</button><button class=act onclick="A.cm()">বন্ধ</button>`)});
+lp($("list"),".it",b=>{const id=b.dataset.id,c=chats[id];if(!c)return;mod(`<h3>${esc(ci(c).n)}</h3>${cmEx(id)}<button class=act onclick="A.dc('${id}')">${c.isGroup?"🚪 গ্রুপ ছাড়ুন":"🗑️ চ্যাট মুছুন"}</button><button class=act onclick="A.cm()">বন্ধ</button>`)});
 M.addEventListener("click",e=>{const q=e.target.closest(".rq");if(q){const t=$("m"+q.dataset.r);t&&t.scrollIntoView({behavior:"smooth",block:"center"})}});
 A.rp=id=>{cm();const m=MS[id];RP={id,fn:m.fn,text:m.kind=="voice"?"🎤 ভয়েস":m.kind=="img"?"📷 ছবি":m.text};ED=null;rpUI();$("in").focus()};
 A.rx=()=>{if(ED)$("in").value="";RP=ED=null;rpUI();ic()};
@@ -261,7 +267,7 @@ A.ch=()=>{const c=chats[cur];if(!c)return;if(c.isGroup)gi();else pf(ci(c).o)};
 function pf(uid){const u=U[uid]||{},bl=me.blocked&&me.blocked[uid];
  page(u.name||"প্রোফাইল",`<div class=pb>${av(u.photo,u.name,130)}<h2>${esc(u.name)}</h2><div class=sb>@${esc(u.username)}</div><p>${esc(u.about||"")}</p><div class=row><button class=ro onclick="A.dial('${uid}',0)">📞<small>অডিও</small></button><button class=ro onclick="A.dial('${uid}',1)">🎥<small>ভিডিও</small></button></div><button class="bt ${bl?"g":"rd"}" onclick="A.blk('${uid}')">${bl?"আনব্লক করুন":"🚫 ব্লক করুন"}</button><button class="bt g" onclick="A.dcu('${uid}')">🗑️ চ্যাট মুছুন</button></div>`)}
 A.blk=async uid=>{const bl=me.blocked&&me.blocked[uid];if(!bl&&!confirm("ব্লক করবেন? তার নতুন মেসেজ আপনি দেখবেন না।"))return;await updateDoc(doc(db,"users",me.uid),{["blocked."+uid]:bl?deleteField():Date.now()});toast(bl?"আনব্লক হয়েছে":"ব্লক করা হয়েছে");setTimeout(()=>pf(uid),400)};
-function gi(){const c=chats[cur];page(c.name,`<div class=pb style="padding-bottom:8px"><div onclick="A.gp()">${av(c.photo,c.name,110,1)}</div><div class=sb>ছবি বদলাতে ছবিতে চাপুন</div><h2>${esc(c.name)}</h2><div class=sb>${c.members.length} জন সদস্য</div></div>`+c.members.map(id=>{const u=U[id]||(c.users&&c.users[id])||{};return`<div class=it>${av(u.photo,u.name,42)}<div class=m><b>${esc(u.name)}</b><div class=sb>@${esc(u.username)}${id==c.admin?" · অ্যাডমিন":""}</div></div>${c.admin==me.uid&&id!=me.uid?`<span style="font-size:20px;padding:6px" onclick="A.rm('${id}')">✕</span>`:""}</div>`}).join("")+`<div style="padding:14px"><input class=fi id=mi placeholder="নতুন সদস্যের আইডি" autocapitalize=none><button class=bt style="margin-top:10px" onclick="A.am()">সদস্য যোগ করুন</button><button class="bt rd" style="margin-top:10px" onclick="A.dc('${cur}')">🚪 গ্রুপ ছাড়ুন</button></div>`)}
+function gi(){const c=chats[cur];page(c.name,`<div class=pb style="padding-bottom:8px"><div onclick="A.gp()">${av(c.photo,c.name,110,1)}</div><div class=sb>ছবি বদলাতে ছবিতে চাপুন</div><h2>${esc(c.name)}</h2><div class=sb>${c.members.length} জন সদস্য</div></div>`+c.members.map(id=>{const u=U[id]||(c.users&&c.users[id])||{};return`<div class=it>${av(u.photo,u.name,42)}<div class=m><b>${esc(u.name)}</b><div class=sb>@${esc(u.username)}${id==c.admin||(c.adm||[]).includes(id)?" · অ্যাডমিন":""}</div></div>${(c.admin==me.uid||(c.adm||[]).includes(me.uid))&&id!=me.uid&&id!=c.admin?`<span style="font-size:20px;padding:6px" onclick="A.rm('${id}')">✕</span>`:""}</div>`}).join("")+`<div style="padding:14px"><input class=fi id=mi placeholder="নতুন সদস্যের আইডি" autocapitalize=none><button class=bt style="margin-top:10px" onclick="A.am()">সদস্য যোগ করুন</button><button class="bt rd" style="margin-top:10px" onclick="A.dc('${cur}')">🚪 গ্রুপ ছাড়ুন</button></div>`)}
 A.am=async()=>{const c=chats[cur],u=cl($("mi").value);if(!u)return;const o=await fu(u);if(!o)return toast("আইডি পাওয়া যায়নি");if(c.members.includes(o.uid))return toast("আগেই সদস্য আছে");const up={members:arrayUnion(o.uid)};up["users."+o.uid]={username:o.username,name:o.name};await updateDoc(doc(db,"chats",cur),up);toast("যোগ করা হয়েছে");history.back()};
 async function fu(u){const s=await getDocs(query(collection(db,"users"),where("username","==",u),limit(1)));if(s.empty)return null;const d=s.docs[0].data();return{uid:s.docs[0].id,username:d.username,name:d.name}}
 A.add=()=>mod(`<h3>নতুন চ্যাট</h3><input id=aid placeholder="বন্ধুর আইডি" autocapitalize=none><button class=bt onclick="A.au()">অ্যাড করুন</button><button class="bt g" onclick="A.scan()">📷 QR স্ক্যান</button><button class="bt g" onclick="A.ng()">👥 নতুন গ্রুপ</button>`);
@@ -282,6 +288,7 @@ function stopScan(){scanning=false;if(stream){stream.getTracks().forEach(t=>t.st
 function rs(){if(!me)return;const u=me;$("ts").innerHTML=`<div class=it onclick="A.me()">${av(u.photo,u.name,64)}<div class=m><b style="font-size:18px">${esc(u.name)}</b><div class=sb>${esc(u.about||"")}</div><div class=sb>@${esc(u.username)}</div></div><span style="font-size:22px" onclick="event.stopPropagation();A.qr()">▦</span></div>
 <div class=st>থিম</div><div class=row style="padding:8px 14px"><button class=ro onclick="A.th('a')" style="font-size:14px">🔵<small>নীল-কালো</small></button><button class=ro onclick="A.th('b')" style="font-size:14px">🟤<small>চকলেট</small></button><button class=ro onclick="A.th('c')" style="font-size:14px">⚪<small>হালকা</small></button></div>
 <div class=st>নোটিফিকেশন</div><div class=li onclick="A.nt()">🔔<div class=m>নোটিফিকেশন ও রিং<div class=sb>${window.Notification&&Notification.permission=="granted"?"চালু আছে":"বন্ধ — চাপ দিয়ে চালু করুন"}</div></div></div>
+<div class=li onclick="A.nd()">🛠️<div class=m>নোটিফিকেশন পরীক্ষা<div class=sb>সমস্যা হলে এখানে দেখুন</div></div></div>
 <div class=st>নিরাপত্তা</div><div class=li onclick="A.lk()">🔒<div class=m>অ্যাপ লক (ক্যালকুলেটর ছদ্মবেশে)<div class=sb>${localStorage.pin?"চালু আছে":"বন্ধ"}</div></div></div>
 <div class=li onclick="A.bll()">🚫<div class=m>ব্লক করা তালিকা</div></div>
 <div class=st>অ্যাকাউন্ট</div><div class=li onclick="A.out()">⏻<div class=m>লগআউট</div></div>`}
@@ -311,7 +318,7 @@ A.dial=async(o,v)=>{if(call)return;if(!navigator.mediaDevices)return toast("এ�
  $("pg").style.display="none";let st;try{st=await gm(v)}catch(e){return toast("মাইক/ক্যামেরার অনুমতি দিন")}
  const id=doc(collection(db,"calls")).id,pc=mkpc(id,st,1);call={id,pc,st,video:!!v,role:"out",state:"ring",o,u:[]};cui();
  call.u.push(wc(id,pc));const of=await pc.createOffer();await pc.setLocalDescription(of);
- await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:of.type,sdp:of.sdp},ts:Date.now()});pc.hold=false;pc.hq.splice(0).forEach(c=>pc.snd(c));
+ await setDoc(doc(db,"calls",id),{caller:me.uid,callee:o,cn:me.name,tn:(U[o]||{}).name||"",video:!!v,status:"ringing",offer:{type:of.type,sdp:of.sdp},ts:Date.now()});pc.hold=false;pc.hq.splice(0).forEach(c=>pc.snd(c));callPush([me.uid,o].sort().join("_"),v,0);
  call.rt=ring(0);
  call.u.push(onSnapshot(doc(db,"calls",id),async s=>{const d=s.data();if(!d||!call||call.id!=id)return;if(d.answer&&!pc.remoteDescription){await pc.setRemoteDescription(d.answer);await fl(pc)}
   if(d.status=="accepted"&&call.state!="on")go();if(["ended","declined","missed"].includes(d.status))stop(d.status=="declined"?"কল প্রত্যাখ্যান করা হয়েছে":"কল শেষ")}));
@@ -331,7 +338,7 @@ function cui(){const k=call,o=k.role=="out"?k.o:k.d.caller,u=U[o]||{},nm=k.group
  $("call").style.display="flex";$("cia").innerHTML=k.video?"":k.group?av((chats[k.cid]||{}).photo,k.name,120,1):av(u.photo,nm,120);$("cn").textContent=nm;
  $("rv").style.display=k.video?"block":"none";$("lv").style.display=k.video&&k.st?"block":"none";if(k.st)$("lv").srcObject=k.st;
  $("cst").textContent=k.state=="ring"?"রিং হচ্ছে...":k.state=="inring"?(k.video?"ইনকামিং ভিডিও কল":"ইনকামিং অডিও কল"):"সংযুক্ত হচ্ছে...";
- $("cb").innerHTML=k.state=="inring"?`<button class=rd onclick="A.dec()">✕</button><button class=gr onclick="A.acc()">📞</button>`:k.state=="ring"?`<button class=rd onclick="A.hang()">✕</button>`:`<button onclick="A.mu(this)">🎤</button>${k.video?`<button onclick="A.cm2(this)">📷</button>`:""}<button class=rd onclick="A.hang()">✕</button>`}
+ $("cb").innerHTML=k.state=="inring"?`<button class=rd onclick="A.dec()">✕</button><button class=gr onclick="A.acc()">📞</button>`:k.state=="ring"?`<button class=rd onclick="A.hang()">✕</button>`:`<button onclick="A.mu(this)">🎤</button>${k.video?`<button onclick="A.cm2(this)">📷</button>`:""}${k.video&&!k.group?`<button onclick="A.fc(this)">🔄</button>`:""}<button class=rd onclick="A.hang()">✕</button>`}
 // ---------- গ্রুপ অডিও কল ----------
 const gs=(to,t,c)=>call&&addDoc(collection(db,"calls",call.id,"cand"),{from:me.uid,to,t,c,ts:Date.now()}).catch(()=>{});
 function gpeer(p){if(call.peers[p])return call.peers[p];const pc=new RTCPeerConnection(ICE()),au=new Audio();au.autoplay=true;call.st.getTracks().forEach(t=>pc.addTrack(t,call.st));const o={pc,au,pend:[]};
@@ -352,9 +359,74 @@ A.gc=async cid=>{if(call)return;const c=chats[cid];if(!c||!c.isGroup)return;if(!
  $("pg").style.display="none";let st;try{st=await gm(0)}catch(e){return toast("মাইকের অনুমতি দিন")}
  const id=doc(collection(db,"calls")).id;call={id,st,group:1,video:false,role:"out",state:"ring",u:[],cid,name:c.name,parts:[me.uid]};cui();
  try{await setDoc(doc(db,"calls",id),{group:true,chat:cid,caller:me.uid,callee:"g",members:c.members,parts:[me.uid],cn:me.name,tn:c.name,gn:c.name,video:false,status:"ringing",ts:Date.now()})}catch(e){return stop("কল শুরু করা যায়নি: "+(e.code||""))}
- call.rt=ring(0);grun(id);call.to=setTimeout(()=>{if(call&&call.state=="ring")A.hang()},60000)};
+ callPush(cid,0,1);call.rt=ring(0);grun(id);call.to=setTimeout(()=>{if(call&&call.state=="ring")A.hang()},60000)};
 async function gjoin(){const id=call.id;clearInterval(call.rt);clearTimeout(call.to);let st;try{st=await gm(0)}catch(e){toast("মাইকের অনুমতি দিন");return stop("")}
  call.st=st;call.parts=[];grun(id);try{await updateDoc(doc(db,"calls",id),{parts:arrayUnion(me.uid)})}catch(e){return stop("যোগ দেওয়া যায়নি: "+(e.code||""))}go()}
 async function gleave(){const id=call.id,rest=(call.parts||[]).filter(x=>x!=me.uid),u={parts:arrayRemove(me.uid)};if(!rest.length){u.status="ended";u.et=Date.now()}await updateDoc(doc(db,"calls",id),u).catch(()=>{});stop("কল শেষ")}
+// ================= নতুন ফিচার (যোগ করা) =================
+function pres2(u){return u.ls&&Date.now()-u.ls<100000?"🟢 অনলাইন":u.ls?"শেষ দেখা "+fmt(u.ls):"@"+(u.username||"")}
+function pres(){const f=()=>{if(!me)return;if(document.visibilityState=="visible")updateDoc(doc(db,"users",me.uid),{ls:Date.now()}).catch(()=>{});if(cur)hdr()};f();clearInterval(pres.i);pres.i=setInterval(f,40000)}
+document.addEventListener("visibilitychange",()=>{if(me&&document.visibilityState=="visible")updateDoc(doc(db,"users",me.uid),{ls:Date.now()}).catch(()=>{})});
+// ফিল্টার, পিন, আর্কাইভ, মিউট, ফেভারিট
+let FLT="all";const FL=[["all","সব"],["unread","আনরিড"],["grp","গ্রুপ"],["fav","ফেভারিট"],["arch","আর্কাইভ"]];
+function flUI(){$("fl").innerHTML=FL.map(f=>`<button class="${FLT==f[0]?"on":""}" onclick="A.fl('${f[0]}')">${f[1]}</button>`).join("")}
+A.fl=f=>{FLT=f;flUI();rl()};
+function fltOk(c){const a=c.arch&&c.arch[me.uid];if(FLT=="arch")return !!a;if(a)return false;if(FLT=="unread")return (c.unread&&c.unread[me.uid]||0)>0;if(FLT=="grp")return !!c.isGroup;if(FLT=="fav")return !!(c.fav&&c.fav[me.uid]);return true}
+const pn=c=>c.pin&&c.pin[me.uid]?1:0;
+const cmEx=id=>{const c=chats[id],f=k=>c[k]&&c[k][me.uid];return`<button class=act onclick="A.tg('${id}','pin')">${f("pin")?"📌 আনপিন":"📌 পিন করুন"}</button><button class=act onclick="A.tg('${id}','fav')">${f("fav")?"💔 ফেভারিট থেকে সরান":"💙 ফেভারিট"}</button><button class=act onclick="A.tg('${id}','mute')">${f("mute")?"🔔 আনমিউট":"🔕 মিউট"}</button><button class=act onclick="A.tg('${id}','arch')">${f("arch")?"📤 আর্কাইভ থেকে আনুন":"📥 আর্কাইভ"}</button>`};
+A.tg=(id,k)=>{cm();const c=chats[id],v=c&&c[k]&&c[k][me.uid];updateDoc(doc(db,"chats",id),{[k+"."+me.uid]:v?deleteField():true}).catch(()=>toast("করা যায়নি"))};
+// লিংক ও "আরও পড়ুন"
+function lkf(t){const h=esc(t).replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" target="_blank" rel="noopener" style="color:#4fc3f7" onclick="event.stopPropagation()">${u}</a>`);return t.length>600?`<div class=clamp>${h}</div><div class=rmr onclick="this.previousElementSibling.classList.remove('clamp');this.remove()">আরও পড়ুন…</div>`:h}
+// রিঅ্যাকশন, ফরওয়ার্ড চিহ্ন
+function rxe(d){const id=d.dataset.id,r=chats[cur]&&chats[cur].rx&&chats[cur].rx[id],o=d.querySelector(".rxs");if(o)o.remove();if(!r)return;const em={};Object.values(r).forEach(e=>em[e]=(em[e]||0)+1);const x=document.createElement("div");x.className="rxs";x.innerHTML=Object.keys(em).map(e=>`<span>${e}${em[e]>1?" "+em[e]:""}</span>`).join("");d.appendChild(x)}
+const rxAll=()=>document.querySelectorAll("#msgs .b").forEach(rxe);
+const _htm=htm;htm=function(...a){const d=_htm(...a),m=a[1];if(m.fwd&&!m.del)d.insertAdjacentHTML("afterbegin","<div class=sb style='font-style:italic'>↪️ ফরওয়ার্ড করা</div>");rxe(d);return d};
+A.rx2=async(id,e)=>{cm();const c=chats[cur],cu=c&&c.rx&&c.rx[id]&&c.rx[id][me.uid];try{await updateDoc(doc(db,"chats",cur),{["rx."+id+"."+me.uid]:cu==e?deleteField():e})}catch(er){toast("রিঅ্যাকশন দেওয়া যায়নি")}};
+// টাইপ করছে...
+const _hdr=hdr;hdr=function(){_hdr();const c=chats[cur];if(!c)return;const now=Date.now(),t=c.typ||{},who=c.members.filter(x=>x!=me.uid&&now-(t[x]||0)<5000);if(who.length){$("cs").textContent=c.isGroup?"✍️ "+who.map(x=>(U[x]||(c.users&&c.users[x])||{}).name||"?").join(", ")+" টাইপ করছে...":"✍️ টাইপ করছে...";clearTimeout(hdr.t);hdr.t=setTimeout(hdr,5200)}rxAll()};
+$("in").addEventListener("input",()=>{if(!cur||!$("in").value)return;const n=Date.now();if(n-(A.tt||0)<3000)return;A.tt=n;updateDoc(doc(db,"chats",cur),{["typ."+me.uid]:n}).catch(()=>{})});
+// ফরওয়ার্ড
+A.fw=id=>{cm();const L=Object.keys(chats).filter(x=>!(chats[x].hid&&chats[x].hid[me.uid])).map(x=>`<button class=act onclick="A.fw2('${id}','${x}')">${esc(ci(chats[x]).n)}</button>`).join("");mod(`<h3>ফরওয়ার্ড করুন</h3>${L}<button class=act onclick="A.cm()">বন্ধ</button>`)};
+A.fw2=async(id,cid)=>{cm();const m=MS[id],c=chats[cid];if(!m||!c)return;try{if(!c.isGroup){const o=c.members.find(y=>y!==me.uid);if(U[o]&&U[o].blocked&&U[o].blocked[me.uid])return toast("এই ব্যবহারকারীকে পাঠানো যাচ্ছে না")}
+ const ts=Date.now(),x={from:me.uid,fn:me.name,ts,kind:m.kind,fwd:true};if(m.kind=="img")x.img=m.img;else if(m.kind=="voice"){x.audio=m.audio;x.dur=m.dur}else x.text=m.text;
+ await addDoc(collection(db,"chats",cid,"messages"),x);const up={lastText:m.kind=="img"?"📷 ছবি":m.kind=="voice"?"🎤 ভয়েস মেসেজ":m.text,lastTs:ts,lastFrom:me.uid,lastName:me.name};c.members.forEach(y=>{up["hid."+y]=deleteField();if(y!=me.uid)up["unread."+y]=increment(1)});await updateDoc(doc(db,"chats",cid),up);pushN(cid);toast("ফরওয়ার্ড হয়েছে")}catch(e){toast("ফরওয়ার্ড করা যায়নি")}};
+// তারকা মেসেজ
+let ST={};try{ST=JSON.parse(localStorage.st||"{}")}catch(e){}
+A.sr2=id=>{cm();if(ST[id])delete ST[id];else{const m=MS[id];ST[id]={c:cur,fn:m.fn,ts:m.ts,t:m.kind=="img"?"📷 ছবি":m.kind=="voice"?"🎤 ভয়েস":m.text}}localStorage.st=JSON.stringify(ST);toast(ST[id]?"তারকা দেওয়া হয়েছে":"তারকা সরানো হয়েছে")};
+A.stp=()=>{const k=Object.keys(ST).filter(id=>ST[id].c==cur).sort((a,b)=>ST[b].ts-ST[a].ts);page("তারকা চিহ্নিত মেসেজ",k.length?k.map(id=>`<div class=it><div class=m><b>${esc(ST[id].fn||"")}</b><div class=sb style="white-space:normal">${esc(ST[id].t||"")}</div><small class=sb>${fmt(ST[id].ts)}</small></div></div>`).join(""):`<div class=em>কোনো তারকা চিহ্নিত মেসেজ নেই</div>`)};
+// মিডিয়া
+A.md2=()=>{const im=Object.keys(MS).filter(id=>MS[id].kind=="img"&&!MS[id].del&&$("m"+id)).sort((a,b)=>MS[b].ts-MS[a].ts);page("মিডিয়া",im.length?`<div class=mg>${im.map(id=>`<img src="${MS[id].img}" onclick="A.vi(this.src)">`).join("")}</div>`:`<div class=em>কোনো ছবি নেই</div>`)};
+// চ্যাট মেনু (⋮), সার্চ, মিউট, ওয়ালপেপার
+A.cmn=()=>{const c=chats[cur];if(!c)return;mod(`<h3>${esc(ci(c).n)}</h3><button class=act onclick="A.cm();A.ch()">👤 ${c.isGroup?"গ্রুপের তথ্য":"কন্টাক্ট দেখুন"}</button><button class=act onclick="A.cs()">🔍 মেসেজ খুঁজুন</button><button class=act onclick="A.cm();A.md2()">🖼️ মিডিয়া</button><button class=act onclick="A.cm();A.stp()">⭐ তারকা চিহ্নিত মেসেজ</button><button class=act onclick="A.tg('${cur}','mute')">${c.mute&&c.mute[me.uid]?"🔔 আনমিউট":"🔕 মিউট"}</button><button class=act onclick="A.wp()">🎨 ওয়ালপেপার</button><button class=act onclick="A.cm()">বন্ধ</button>`)};
+A.cs=()=>{cm();$("cs2").style.display="block";$("csi").value="";$("csi").focus()};
+$("csi").oninput=()=>{const q=$("csi").value.trim().toLowerCase();document.querySelectorAll("#msgs .b").forEach(b=>{b.style.display=!q||b.textContent.toLowerCase().includes(q)?"":"none"})};
+$("csi").onblur=()=>{if(!$("csi").value){$("cs2").style.display="none"}};
+const _oc=A.oc;A.oc=id=>{_oc(id);$("cs2").style.display="none";$("csi").value=""};
+const WPS=[["","ডিফল্ট"],["#0b1a2b","গাঢ় নীল"],["#1b1410","চকলেট"],["#000","কালো"],["linear-gradient(#0a1929,#1e3a5f)","নীল গ্রেডিয়েন্ট"],["linear-gradient(#1a110e,#4e342e)","চকলেট গ্রেডিয়েন্ট"],["#e8eef5","হালকা"]];
+const wpA=()=>{$("msgs").style.background=localStorage.wp||""};wpA();
+A.wp=()=>mod(`<h3>ওয়ালপেপার</h3>${WPS.map((w,i)=>`<button class=act onclick="A.wp2(${i})">${w[1]}</button>`).join("")}<button class=act onclick="A.cm()">বন্ধ</button>`);
+A.wp2=i=>{cm();localStorage.wp=WPS[i][0];wpA()};
+// ডান দিকে সোয়াইপ করলে রিপ্লাই
+(()=>{let x0=0,y0=0,el=null,dx=0;M.addEventListener("touchstart",e=>{el=e.target.closest(".b");const q=e.touches[0];x0=q.clientX;y0=q.clientY;dx=0},{passive:true});
+ M.addEventListener("touchmove",e=>{if(!el)return;const q=e.touches[0];dx=q.clientX-x0;const dy=Math.abs(q.clientY-y0);if(dx>0&&dy<25)el.style.transform="translateX("+Math.min(dx,70)+"px)";else if(dy>=25)el.style.transform=""},{passive:true});
+ M.addEventListener("touchend",()=>{if(!el)return;el.style.transform="";const id=el.dataset.id;if(dx>70&&MS[id]&&!MS[id].del)A.rp(id);el=null;dx=0});
+ M.addEventListener("touchcancel",()=>{if(el)el.style.transform="";el=null})})();
+// কন্টাক্ট ও গ্রুপ তথ্যে বাড়তি অংশ
+const xtra=()=>cur?`<div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:10px"><button class="bt g" onclick="A.md2()">🖼️ মিডিয়া</button><button class="bt g" onclick="A.stp()">⭐ তারকা চিহ্নিত মেসেজ</button><button class="bt g" onclick="A.tg('${cur}','mute')">🔕 মিউট / আনমিউট</button></div>`:"";
+const _pf=pf;pf=function(uid){_pf(uid);const u=U[uid]||{},pb=$("pg").querySelector(".pb");if(!pb)return;const h=pb.querySelector("h2"),d=document.createElement("div");d.className="sb";d.textContent=pres2(u);if(h)h.after(d);pb.insertAdjacentHTML("beforeend",xtra())};
+const _gi=gi;gi=function(){_gi();const c=chats[cur],box=$("pg").lastElementChild;if(!c||!box)return;box.insertAdjacentHTML("beforeend",`<div style="padding:0 14px 14px"><div class=fi onclick="A.gd()">📝 গ্রুপ বিবরণ: <b>${esc(c.desc||"যোগ করুন")}</b></div>${c.admin==me.uid?`<button class="bt g" style="margin-top:10px" onclick="A.ga()">👑 অ্যাডমিন ম্যানেজ</button>`:""}${xtra()}</div>`)};
+A.gd=async()=>{const c=chats[cur],n=prompt("গ্রুপের বিবরণ",c.desc||"");if(n!=null){try{await updateDoc(doc(db,"chats",cur),{desc:n.trim()});setTimeout(gi,400)}catch(e){toast("করা যায়নি")}}};
+A.ga=()=>{const c=chats[cur];mod(`<h3>অ্যাডমিন</h3>`+c.members.filter(x=>x!=me.uid).map(x=>{const u=U[x]||(c.users&&c.users[x])||{},a=(c.adm||[]).includes(x);return`<button class=act onclick="A.ga2('${x}',${a?0:1})">${a?"👑":"👤"} ${esc(u.name)} — ${a?"অ্যাডমিন সরান":"অ্যাডমিন বানান"}</button>`}).join("")+`<button class=act onclick="A.cm()">বন্ধ</button>`)};
+A.ga2=async(x,on)=>{cm();try{await updateDoc(doc(db,"chats",cur),{adm:on?arrayUnion(x):arrayRemove(x)});toast("হয়েছে")}catch(e){toast("করা যায়নি")}};
+// ক্যামেরা ঘোরানো (ভিডিও কল)
+A.fc=async()=>{if(!call||!call.st||!call.pc)return;const old=call.st.getVideoTracks()[0];if(!old)return;const m=(old.getSettings&&old.getSettings().facingMode)=="environment"?"user":"environment";
+ try{old.stop();const ns=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:m}}}),nt=ns.getVideoTracks()[0],sn=call.pc.getSenders().find(x=>x.track&&x.track.kind=="video");if(sn)await sn.replaceTrack(nt);call.st.removeTrack(old);call.st.addTrack(nt);$("lv").srcObject=call.st}catch(e){toast("ক্যামেরা বদলানো যায়নি")}};
+// কল শুরুতে পুশ নোটিফিকেশন
+const callPush=(cid,v,g)=>{const c=chats[cid];if(!c)return;updateDoc(doc(db,"chats",cid),{lastText:"📞 "+(g?"গ্রুপ কল":v?"ভিডিও কল":"অডিও কল"),lastTs:Date.now(),lastFrom:me.uid,lastName:me.name}).then(()=>pushN(cid)).catch(()=>{})};
+// নোটিফিকেশন পরীক্ষা
+A.nd=async()=>{const r=[];r.push("অনুমতি: "+(window.Notification?Notification.permission:"নেই"));let rg=null;try{rg=await navigator.serviceWorker.getRegistration()}catch(e){}r.push("সার্ভিস ওয়ার্কার: "+(rg?"চালু":"নেই"));r.push("টোকেন সংরক্ষিত: "+(localStorage.getItem("fcmTok")?"হ্যাঁ":"না"));
+ page("নোটিফিকেশন পরীক্ষা",`<div style="padding:14px;line-height:1.9">${r.map(esc).join("<br>")}<br><br><button class=bt onclick="A.nd2()">🔄 টোকেন নতুন করে নিন</button><button class="bt g" style="margin-top:10px" onclick="A.nd3()">📤 সার্ভারে টেস্ট পাঠান</button><div id=ndr class=sb style="margin-top:12px;white-space:pre-wrap"></div></div>`)};
+A.nd2=async()=>{localStorage.removeItem("fcmTok");await regPush();$("ndr").textContent=localStorage.getItem("fcmTok")?"✅ টোকেন পাওয়া গেছে":"❌ টোকেন পাওয়া যায়নি (অনুমতি বা ইন্টারনেট দেখুন)"};
+A.nd3=async()=>{const el=$("ndr"),id=Object.keys(chats).find(x=>!chats[x].isGroup)||Object.keys(chats)[0];if(!id){el.textContent="কোনো চ্যাট নেই";return}try{const k=await auth.currentUser.getIdToken(),res=await fetch(PUSH_URL,{method:"POST",headers:{Authorization:"Bearer "+k,"Content-Type":"application/json"},body:JSON.stringify({chat:id})}),tx=await res.text();el.textContent="সার্ভারের উত্তর: "+res.status+"\n"+tx.slice(0,300)}catch(e){el.textContent="❌ সার্ভারে পৌঁছানো যায়নি: "+e.message}};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
