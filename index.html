@@ -70,7 +70,7 @@ nav button small{font-size:11px}nav button.on{color:#fff;box-shadow:inset 0 3px 
 .clamp{max-height:9.5em;overflow:hidden}.rmr{color:#4fc3f7;font-size:13px}
 #cs2{display:none;padding:6px 10px;background:var(--cd)}
 .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}.mg img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}
-</style></head><body>
+html,body,button,.it,.act,.ib{touch-action:manipulation}</style></head><body>
 
 <div id="auth" class="sc">
 <h1>💬 ভাই চ্যাট</h1>
@@ -177,6 +177,7 @@ function tabTo(t){["tc","tl","ts"].forEach(x=>$(x).style.display=x==t?"block":"n
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tabTo(b.dataset.t));
 $("q").oninput=rl;
 const ci=c=>{if(c.isGroup)return{g:1,n:c.name,p:c.photo,s:c.members.length+" জন সদস্য"};const o=c.members.find(x=>x!==me.uid),u=U[o]||(c.users&&c.users[o])||{};return{g:0,o,n:u.name||"?",p:u.photo,s:pres2(u)}};
+{const D=Object.getOwnPropertyDescriptor(Element.prototype,"innerHTML");[$("list"),$("cl")].forEach(el=>{if(el)Object.defineProperty(el,"innerHTML",{set(h){if(el._h!==h){el._h=h;D.set.call(el,h)}},get(){return D.get.call(el)},configurable:true})})}
 function rl(){if(!me)return;const q=($("q").value||"").trim().toLowerCase();
  const ids=Object.keys(chats).filter(id=>!(chats[id].hid&&chats[id].hid[me.uid])&&(!q||ci(chats[id]).n.toLowerCase().includes(q))&&fltOk(chats[id])).sort((a,b)=>pn(chats[b])-pn(chats[a])||(chats[b].lastTs||0)-(chats[a].lastTs||0));
  $("list").innerHTML=ids.length?ids.map(id=>{const c=chats[id],i=ci(c),n=c.unread&&c.unread[me.uid]||0,pre=c.lastFrom==me.uid?"আপনি: ":(c.isGroup&&c.lastName?c.lastName+": ":"");
@@ -238,7 +239,7 @@ A.dm=id=>{cm();LH.push(id);localStorage.hm=JSON.stringify(LH);const e=$("m"+id);
 A.da=async id=>{cm();try{await updateDoc(doc(db,"chats",cur,"messages",id),{del:true,text:"",audio:deleteField(),img:deleteField()})}catch(e){toast("মোছা যায়নি")}};
 let SRC=null;const src=(t,cb,fr)=>{SRC=[cb,fr];mod(`<h3>${t}</h3><button class=act onclick="A.sp(1)">📷 ক্যামেরা</button><button class=act onclick="A.sp(0)">🖼️ গ্যালারি</button><button class=act onclick="A.cm()">বন্ধ</button>`)};
 A.sp=c=>{cm();const [cb,fr]=SRC,f=$(c?"fc":"fi");if(c)f.setAttribute("capture",fr?"user":"environment");f.onchange=async e=>{const x=e.target.files[0];e.target.value="";if(!x)return;try{await cb(x)}catch(er){toast("সমস্যা: "+(er.code||er.message||""))}};f.click()};
-const rzm=(f,mx,q)=>new Promise((r,j)=>{const i=new Image();i.onload=()=>{const k=Math.min(1,mx/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext("2d").drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(i.src);r(c.toDataURL("image/jpeg",q))};i.onerror=()=>j(new Error("ছবি পড়া যায়নি"));i.src=URL.createObjectURL(f)});
+const rzm=(f,mx,q)=>new Promise((r,j)=>{const i=new Image();i.onload=()=>{const k=Math.min(1,mx/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(i.src);r(c.toDataURL("image/jpeg",q))};i.onerror=()=>j(new Error("ছবি পড়া যায়নি"));i.src=URL.createObjectURL(f)});
 A.att=()=>src("ছবি পাঠান",async f=>{let q=.7,m=1000,d=await rzm(f,m,q);while(d.length>850000&&q>.3){q-=.15;m-=150;d=await rzm(f,m,q)}if(d.length>900000)return toast("ছবি অনেক বড়");await sendMsg({kind:"img",img:d},"📷 ছবি")});
 A.vi=u=>mod(`<img src="${u}" style="max-width:100%;max-height:75vh;border-radius:8px"><button class=act onclick="A.cm()">বন্ধ</button>`);
 A.gp=()=>src("গ্রুপের ছবি",async f=>{const p=await rz(f,200);await updateDoc(doc(db,"chats",cur),{photo:p});toast("গ্রুপের ছবি বদলানো হয়েছে");setTimeout(gi,400)});
@@ -330,7 +331,7 @@ A.acc=async()=>{if(call.group)return gjoin();const {id,d}=call;clearInterval(cal
  call.u.push(onSnapshot(doc(db,"calls",id),s=>{const x=s.data();if(x&&x.status=="ended")stop("কল শেষ")}));go()};
 A.dec=async()=>{if(call.group)return stop("");const id=call.id;await updateDoc(doc(db,"calls",id),{status:"declined"}).catch(()=>{});stop("")};
 A.hang=async()=>{if(call.group)return gleave();const id=call.id,s=call.role=="out"&&call.state=="ring"?"missed":"ended";await updateDoc(doc(db,"calls",id),{status:s,et:Date.now()}).catch(()=>{});stop("কল শেষ")};
-function go(){clearInterval(call.rt);clearTimeout(call.to);call.state="on";call.t0=Date.now();call.tm=setInterval(()=>$("cst").textContent=df((Date.now()-call.t0)/1000)+(call.group?" · "+(call.parts||[]).length+" জন":""),500);cui()}
+function go(){clearInterval(call.rt);clearTimeout(call.to);call.state="on";call.t0=Date.now();call.tm=setInterval(()=>$("cst").textContent=df((Date.now()-call.t0)/1000)+(call.group?" · "+(call.parts||[]).length+" জন":"")+(!call.group&&call.pc?" · "+call.pc.iceConnectionState:""),500);cui()}
 function stop(msg){if(!call)return;[call.rt,call.tm,call.to].forEach(x=>{clearInterval(x);clearTimeout(x)});call.u.forEach(f=>f());if(call.st)call.st.getTracks().forEach(t=>t.stop());if(call.pc)call.pc.close();if(call.peers)Object.keys(call.peers).forEach(gdrop);try{navigator.serviceWorker.getRegistration().then(r=>r&&r.getNotifications({tag:"call"}).then(a=>a.forEach(n=>n.close())))}catch(e){}$("rv").srcObject=null;$("lv").srcObject=null;$("call").style.display="none";call=null;if(msg)toast(msg)}
 A.mu=b=>{const t=call.st.getAudioTracks()[0];t.enabled=!t.enabled;b.textContent=t.enabled?"🎤":"🔇"};
 A.cm2=b=>{const t=call.st.getVideoTracks()[0];if(t){t.enabled=!t.enabled;b.textContent=t.enabled?"📷":"🚫"}};
@@ -419,8 +420,8 @@ A.gd=async()=>{const c=chats[cur],n=prompt("গ্রুপের বিবর�
 A.ga=()=>{const c=chats[cur];mod(`<h3>অ্যাডমিন</h3>`+c.members.filter(x=>x!=me.uid).map(x=>{const u=U[x]||(c.users&&c.users[x])||{},a=(c.adm||[]).includes(x);return`<button class=act onclick="A.ga2('${x}',${a?0:1})">${a?"👑":"👤"} ${esc(u.name)} — ${a?"অ্যাডমিন সরান":"অ্যাডমিন বানান"}</button>`}).join("")+`<button class=act onclick="A.cm()">বন্ধ</button>`)};
 A.ga2=async(x,on)=>{cm();try{await updateDoc(doc(db,"chats",cur),{adm:on?arrayUnion(x):arrayRemove(x)});toast("হয়েছে")}catch(e){toast("করা যায়নি")}};
 // ক্যামেরা ঘোরানো (ভিডিও কল)
-A.fc=async()=>{if(!call||!call.st||!call.pc)return;const old=call.st.getVideoTracks()[0];if(!old)return;const m=(old.getSettings&&old.getSettings().facingMode)=="environment"?"user":"environment";
- try{old.stop();const ns=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:m}}}),nt=ns.getVideoTracks()[0],sn=call.pc.getSenders().find(x=>x.track&&x.track.kind=="video");if(sn)await sn.replaceTrack(nt);call.st.removeTrack(old);call.st.addTrack(nt);$("lv").srcObject=call.st}catch(e){toast("ক্যামেরা বদলানো যায়নি")}};
+A.fc=async()=>{if(!call||!call.st||!call.pc||call.fcb)return;const old=call.st.getVideoTracks()[0];if(!old)return;call.fcb=1;const cu=call.fm||(old.getSettings&&old.getSettings().facingMode)||"user",m=cu=="environment"?"user":"environment",get=f=>navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:f}}});
+ try{old.stop();let ns;try{ns=await get(m);call.fm=m}catch(e){ns=await get(cu);call.fm=cu;toast("ক্যামেরা বদলানো যায়নি")}const nt=ns.getVideoTracks()[0],sn=call.pc.getSenders().find(x=>x.track===old||(x.track&&x.track.kind=="video"));if(sn)await sn.replaceTrack(nt);call.st.removeTrack(old);call.st.addTrack(nt);$("lv").srcObject=call.st}catch(e){toast("ক্যামেরা বদলানো যায়নি")}finally{call.fcb=0}};
 // কল শুরুতে পুশ নোটিফিকেশন
 const callPush=(cid,v,g)=>{const c=chats[cid];if(!c)return;updateDoc(doc(db,"chats",cid),{lastText:"📞 "+(g?"গ্রুপ কল":v?"ভিডিও কল":"অডিও কল"),lastTs:Date.now(),lastFrom:me.uid,lastName:me.name}).then(()=>pushN(cid)).catch(()=>{})};
 // নোটিফিকেশন পরীক্ষা
