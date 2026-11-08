@@ -16,6 +16,17 @@ button,input,textarea{font-family:inherit;color:inherit}
 .hd b{flex:1}.hd small{font-size:12px;opacity:.8;display:block;font-weight:400}
 .ib{background:none;border:none;color:#fff;font-size:21px;padding:4px 8px}
 .tab{display:none;flex:1;overflow-y:auto}
+#tr{position:relative;background:#000;overflow:hidden}
+.rvh{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;color:#fff;background:linear-gradient(#000a,transparent)}
+.rvf{position:absolute;inset:0;overflow-y:scroll;scroll-snap-type:y mandatory}
+.rvc{height:100%;scroll-snap-align:start;position:relative;background:#000}
+.rvc video{width:100%;height:100%;object-fit:contain}
+.rvr{position:absolute;right:8px;bottom:90px;display:flex;flex-direction:column;gap:14px}
+.rvr button{background:#0006;border:none;color:#fff;font-size:22px;border-radius:50%;width:48px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rvr small{font-size:11px}
+.rvb{position:absolute;left:12px;right:70px;bottom:18px;color:#fff;text-shadow:0 1px 3px #000}
+.emp{padding:40px;text-align:center;opacity:.7;color:#fff}
+
 .sr{padding:8px 12px}.sr input{width:100%;padding:10px 14px;border-radius:22px;border:none;background:var(--cd);font-size:15px;outline:none}
 .it,.li{display:flex;gap:12px;padding:11px 14px;align-items:center;border-bottom:1px solid var(--bd)}
 .it:active,.li:active{background:var(--cd)}
@@ -91,9 +102,9 @@ html,body,button,.it,.act,.ib{touch-action:manipulation}
 <div id="main" class="sc">
 <div class="hd"><b>ভাই চ্যাট</b><span id="net"></span></div>
 <div id="tc" class="tab"><div class="sr"><input id="q" placeholder="🔍 চ্যাট খুঁজুন"></div><div class="fl" id="fl"></div><div id="list"></div></div>
-<div id="tl" class="tab"><div id="cl"></div></div><div id="tm" class="tab"></div><div id="ts" class="tab"></div>
+<div id="tl" class="tab"><div id="cl"></div></div><div id="tm" class="tab"></div><div id="ts" class="tab"></div><div id="tr" class="tab"></div>
 <button id="fab" onclick="A.add()">＋</button>
-<nav><button data-t="tc">💬<small>চ্যাট</small></button><button data-t="tl">📞<small>কল</small></button><button data-t="tm">🛒<small>কেনাবেচা</small></button><button data-t="ts">⚙️<small>সেটিংস</small></button></nav></div>
+<nav><button data-t="tc">💬<small>চ্যাট</small></button><button data-t="tl">📞<small>কল</small></button><button data-t="tr">🎬<small>Reels</small></button><button data-t="tm">🛒<small>কেনাবেচা</small></button><button data-t="ts">⚙️<small>সেটিংস</small></button></nav></div>
 
 <div id="chat" class="sc">
 <div class="hd"><button class="ib" onclick="history.back()">←</button><div id="cav" onclick="A.ch()"></div><b onclick="A.ch()"><span id="ct"></span><small id="cs"></small></b><button class="ib" id="c1" onclick="A.cc(0)">📞</button><button class="ib" id="c2" onclick="A.cc(1)">🎥</button><button class="ib" onclick="A.cmn()">⋮</button></div>
@@ -107,13 +118,13 @@ html,body,button,.it,.act,.ib{touch-action:manipulation}
 <div id="lock" class="sc"><div id="ld">0</div><div id="lk"></div></div>
 <input type="file" id="fi" accept="image/*" hidden><input type="file" id="fc" accept="image/*" capture="environment" hidden><div id="toast"></div>
 
-<script src="turn-config.js"></script>
+<script src="turn-config.js"></script><script src="video-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,getDoc,updateDoc,addDoc,arrayUnion,arrayRemove,increment,deleteField,collection,query,where,orderBy,onSnapshot,getDocs,limit,deleteDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,getDoc,updateDoc,addDoc,arrayUnion,arrayRemove,increment,deleteField,collection,query,where,orderBy,onSnapshot,getDocs,limit,deleteDoc,getCountFromServer} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const CFG={apiKey:"AIzaSyAKQ52fQQpKV4ScAX7gMXFEGQAk3YKt1m0",authDomain:"bhai-chat-76916.firebaseapp.com",projectId:"bhai-chat-76916",storageBucket:"bhai-chat-76916.firebasestorage.app",messagingSenderId:"1039989161381",appId:"1:1039989161381:web:921377ee697c6482217c4c"};
 const app=initializeApp(CFG),auth=getAuth(app);let db;
@@ -179,7 +190,7 @@ async function boot(u){
 window.addEventListener("online",()=>$("net").textContent="");window.addEventListener("offline",()=>$("net").textContent="অফলাইন");
 
 // ---------- ট্যাব ----------
-function tabTo(t){["tc","tl","tm","ts"].forEach(x=>$(x).style.display=x==t?"block":"none");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("fab").style.display=t=="tc"?"block":"none";if(t=="tm")mkOpen()}
+function tabTo(t){["tc","tl","tm","ts","tr"].forEach(x=>$(x).style.display=x==t?"block":"none");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("fab").style.display=t=="tc"?"block":"none";if(t!="tr")rvStop();if(t=="tm")mkOpen();if(t=="tr")rvOpen()}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tabTo(b.dataset.t));
 $("q").oninput=rl;
 const ci=c=>{if(c.isGroup)return{g:1,n:c.name,p:c.photo,s:c.members.length+" জন সদস্য"};const o=c.members.find(x=>x!==me.uid),u=U[o]||(c.users&&c.users[o])||{};return{g:0,o,n:u.name||"?",p:u.photo,s:pres2(u)}};
@@ -468,6 +479,25 @@ const _at=A.att;A.att0=_at;
 A.att=()=>mod(`<h3>পাঠান</h3><button class=act onclick="A.cm();A.att0()">🖼️ ছবি</button><button class=act onclick="A.loc()">📍 আমার লোকেশন</button><button class=act onclick="A.cm()">বন্ধ</button>`);
 A.loc=()=>{cm();if(!navigator.geolocation)return toast("এই ব্রাউজারে লোকেশন নেই");toast("লোকেশন নেওয়া হচ্ছে...");navigator.geolocation.getCurrentPosition(p=>{const a=p.coords.latitude.toFixed(6),b=p.coords.longitude.toFixed(6);sendMsg({kind:"text",text:"📍 আমার লোকেশন\nhttps://maps.google.com/?q="+a+","+b},"📍 লোকেশন").catch(()=>toast("পাঠানো যায়নি"))},()=>toast("লোকেশনের অনুমতি দিন"),{enableHighAccuracy:true,timeout:15000})};
 
+// ===== Reels (ধাপ ১) =====
+let RVM=false,RVO=null,UPX=null;const RS={};
+function rvStop(){document.querySelectorAll("#tr video").forEach(v=>v.pause())}
+function rvOpen(){const t=$("tr");if(!t.dataset.i){t.dataset.i=1;t.innerHTML=`<div class=rvh><b>🎬 Reels</b><button class=ib onclick="A.upOpen()">＋</button></div><div id=rvf class=rvf></div>`;RVO=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector("video");if(e.isIntersecting&&e.intersectionRatio>=.6){if(!v.src)v.src=v.dataset.s;v.muted=!RVM;v.play().catch(()=>{});rvStat(e.target.dataset.id)}else v.pause()}),{root:$("rvf"),threshold:[.6]});A.rvLoad()}}
+function rvCard(v){return`<div class=rvc data-id="${v.id}"><video data-s="${esc(v.url)}" poster="${esc(v.thumb||"")}" loop playsinline muted preload=none onclick="A.rvT(this)"></video><div class=rvr><button onclick="A.rvM()" id=rvm>${RVM?"🔊":"🔇"}</button><button onclick="A.rvL('${v.id}')"><span id="rl${v.id}">🤍</span><small id="rn${v.id}">0</small></button><button onclick="A.rvC('${v.id}')">💬</button>${v.owner==me.uid?`<button onclick="A.rvD('${v.id}')">🗑</button>`:""}</div><div class=rvb><b>@${esc(v.ou||"")}</b><div>${esc(v.desc||"")}</div></div></div>`}
+A.rvLoad=async()=>{const f=$("rvf");f.innerHTML="<div class=emp>লোড হচ্ছে…</div>";try{const s=await getDocs(query(collection(db,"videos"),orderBy("ts","desc"),limit(40)));const L=s.docs.map(d=>({id:d.id,...d.data()})).filter(v=>v.type=="reel"&&!(me.blocked&&me.blocked[v.owner]));f.innerHTML=L.length?L.map(rvCard).join(""):"<div class=emp>এখনো কোনো Reel নেই। ওপরের ＋ চেপে প্রথমটা দিন।</div>";f.querySelectorAll(".rvc").forEach(c=>RVO.observe(c))}catch(e){f.innerHTML=`<div class=emp>${e.code=="permission-denied"?"Firebase Rules যোগ করা বাকি আছে":"লোড হয়নি, নেট দেখুন"}</div>`}};
+async function rvStat(id){if(RS[id])return;RS[id]={n:0,l:false};try{updateDoc(doc(db,"videos",id),{views:increment(1)}).catch(()=>{});const[c,m]=await Promise.all([getCountFromServer(collection(db,"videos",id,"likes")),getDoc(doc(db,"videos",id,"likes",me.uid))]);RS[id]={n:c.data().count,l:m.exists()};rvPaint(id)}catch(e){}}
+function rvPaint(id){const s=RS[id],a=$("rl"+id);if(!a)return;a.textContent=s.l?"❤️":"🤍";$("rn"+id).textContent=s.n}
+A.rvT=v=>{v.paused?v.play():v.pause()};
+A.rvM=()=>{RVM=!RVM;document.querySelectorAll("#tr video").forEach(v=>v.muted=!RVM);document.querySelectorAll("#rvm").forEach(b=>b.textContent=RVM?"🔊":"🔇")};
+A.rvL=async id=>{const s=RS[id]||(RS[id]={n:0,l:false}),fl=()=>{s.l=!s.l;s.n+=s.l?1:-1;rvPaint(id)};fl();try{const r=doc(db,"videos",id,"likes",me.uid);s.l?await setDoc(r,{ts:Date.now()}):await deleteDoc(r)}catch(e){fl();toast("লাইক হয়নি")}};
+A.rvD=async id=>{if(!confirm("এই Reel মুছবেন? (Cloudinary-তে ফাইল থেকে যাবে)"))return;try{await deleteDoc(doc(db,"videos",id));A.rvLoad()}catch(e){toast("মোছা যায়নি")}};
+A.rvC=id=>{mod(`<h3>💬 কমেন্ট</h3><div id=rcl style="max-height:45vh;overflow:auto">লোড হচ্ছে…</div><div style="display:flex;gap:6px;margin-top:8px"><input id=rci placeholder="লিখুন…" style="flex:1;min-width:0"><button class=mkb onclick="A.rvS('${id}')">পাঠান</button></div>`);rvCl(id)};
+async function rvCl(id){try{const s=await getDocs(query(collection(db,"videos",id,"comments"),orderBy("ts","desc"),limit(30)));$("rcl").innerHTML=s.docs.length?s.docs.map(d=>{const c=d.data();return`<div style="padding:6px 0"><b>${esc(c.name||c.un||"")}</b> ${esc(c.text)}${c.uid==me.uid?` <a onclick="A.rvX('${id}','${d.id}')">🗑</a>`:""}</div>`}).join(""):"<div style='opacity:.7'>এখনো কমেন্ট নেই</div>"}catch(e){if($("rcl"))$("rcl").textContent="লোড হয়নি"}}
+A.rvS=async id=>{const x=$("rci").value.trim();if(!x)return;$("rci").value="";try{await addDoc(collection(db,"videos",id,"comments"),{uid:me.uid,un:me.username,name:me.name,text:x.slice(0,300),ts:Date.now()});rvCl(id)}catch(e){toast("পাঠানো যায়নি")}};
+A.rvX=async(v,c)=>{try{await deleteDoc(doc(db,"videos",v,"comments",c));rvCl(v)}catch(e){}};
+A.upOpen=()=>{if(!window.CLD_CLOUD)return toast("ভিডিও সেটআপ বাকি আছে (video-config.js)");UPX=null;page("Reel পোস্ট",`<div style="padding:14px"><input type=file id=upf accept="video/*" onchange="A.upP()"><video id=upv controls playsinline style="width:100%;max-height:40vh;margin:8px 0;display:none"></video><textarea id=upd placeholder="ক্যাপশন" maxlength=200 style="width:100%"></textarea><div style="height:6px;background:#0003;margin:8px 0"><div id=upx style="height:100%;width:0;background:var(--p)"></div></div><button class=mkb id=ups onclick="A.upGo()">পোস্ট</button><div style="font-size:12px;opacity:.7;margin-top:8px">সর্বোচ্চ ৬০ সেকেন্ড, ৫০ MB। আপলোড শেষ না হওয়া পর্যন্ত পেজ খোলা রাখুন।</div></div>`)};
+A.upP=()=>{const f=$("upf").files[0];UPX=null;if(!f)return;if(f.size>50e6)return toast("ফাইল ৫০ MB-এর বেশি");const v=$("upv");v.src=URL.createObjectURL(f);v.style.display="block";v.onloadedmetadata=()=>{if(v.duration>60)return toast("৬০ সেকেন্ডের বেশি লম্বা");UPX={f,d:Math.round(v.duration),w:v.videoWidth,h:v.videoHeight}}};
+A.upGo=()=>{if(!UPX)return toast("আগে ভিডিও বাছুন");const b=$("ups");b.disabled=true;const fd=new FormData();fd.append("file",UPX.f);fd.append("upload_preset",window.CLD_PRESET);fd.append("folder","bhai");const x=new XMLHttpRequest();x.open("POST",`https://api.cloudinary.com/v1_1/${window.CLD_CLOUD}/video/upload`);x.upload.onprogress=e=>{if(e.lengthComputable)$("upx").style.width=e.loaded/e.total*100+"%"};x.onerror=()=>{b.disabled=false;toast("নেট সমস্যা, আবার চেষ্টা করুন")};x.onload=async()=>{try{const r=JSON.parse(x.responseText);if(!r.secure_url)throw 0;const u=r.secure_url,d=$("upd").value.trim();await addDoc(collection(db,"videos"),{owner:me.uid,ou:me.username,on:me.name,type:"reel",url:u.replace("/upload/","/upload/q_auto/"),thumb:u.replace("/upload/","/upload/so_1,w_480,c_fill,f_jpg/").replace(/\.\w+$/,".jpg"),pid:r.public_id,desc:d,dur:UPX.d,w:UPX.w,h:UPX.h,ts:Date.now(),views:0,tl:(d+" "+me.username+" "+me.name).toLowerCase()});toast("পোস্ট হয়েছে ✅");history.back();if($("rvf"))A.rvLoad()}catch(e){b.disabled=false;toast("পোস্ট হয়নি। সেটআপ/Rules দেখুন")}};x.send(fd)};
 // ===== কেনাবেচা (মার্কেট) =====
 const MCAT=["মোবাইল ও গ্যাজেট","ইলেকট্রনিক্স","পোশাক ও ফ্যাশন","খাবার","গাড়ি ও বাইক","বই ও শিক্ষা","বাড়ির জিনিস","অন্যান্য"];
 let MK=[],MKT=0,MKC="",MYS=null,MIMG="";
