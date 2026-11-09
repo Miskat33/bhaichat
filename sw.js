@@ -1,4 +1,4 @@
-var C="bhai-v29";
+var C="bhai-v31";
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(C).then(function(c){return Promise.all(["./","index.html","manifest.json","icon-192.png","icon-512.png"].map(function(u){return c.add(u).catch(function(){})}))}))});
 self.addEventListener("activate",function(e){e.waitUntil(self.clients.claim())});
 self.addEventListener("fetch",function(e){
