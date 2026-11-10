@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ভাই চ্যাট লাইট</title>
+<style>
+html,body{margin:0;height:100%;background:#0a0e14;color:#fff;font-family:sans-serif;font-size:16px}
+.v{display:none;flex-direction:column;height:100%;max-width:520px;margin:0 auto}
+.hd{background:#0b1a2b;padding:7px 8px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bd{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.it{padding:9px 8px;border-bottom:1px solid #1d2733;outline:none}
+.it b{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.it small{display:block;color:#9aa7b5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.it:focus,.nv:focus{background:#1e88e5;outline:none}
+.it:focus small{color:#e3f2fd}
+.un{background:#25d366;color:#000;border-radius:9px;padding:0 6px;font-size:12px;float:right}
+input.nv{display:block;width:92%;margin:6px auto;padding:8px;font-size:16px;border:2px solid #345;background:#111a24;color:#fff;border-radius:6px;box-sizing:border-box;width:94%}
+input.nv:focus{border-color:#1e88e5;background:#111a24}
+button.nv{display:block;width:94%;margin:8px auto;padding:9px;font-size:16px;border:0;border-radius:6px;background:#1565c0;color:#fff}
+button.nv:focus{background:#25d366;color:#000}
+.er{color:#ff8a80;text-align:center;min-height:20px;padding:2px 6px}
+#ms{padding:4px 0;outline:none}
+.m{margin:4px 6px;padding:5px 8px;border-radius:9px;max-width:85%;word-wrap:break-word;white-space:pre-wrap;clear:both}
+.me{background:#1565c0;margin-left:auto}
+.ot{background:#1e2a38}
+.m small{display:block;font-size:11px;color:#b0bec5}
+.m .sn{color:#ffcc80;font-size:12px}
+#inb{padding:4px 6px;background:#0b1a2b}
+#inb input{width:100%;box-sizing:border-box;padding:7px;font-size:16px;border:2px solid #345;border-radius:6px;background:#111a24;color:#fff}
+#inb input:focus{border-color:#25d366;outline:none}
+#sk{display:flex;justify-content:space-between;background:#000;padding:5px 8px;font-size:14px;color:#fff;max-width:520px;margin:0 auto}
+#sk span{cursor:pointer;min-width:30%}
+#sk .c{text-align:center;font-weight:bold}
+#sk .r{text-align:right}
+.em{padding:14px;text-align:center;color:#9aa7b5}
+</style></head><body>
+
+<div id="v1" class="v">
+ <div class="hd">ভাই চ্যাট লাইট</div>
+ <div class="bd">
+  <div class="em">আইডি আর পাসওয়ার্ড দিয়ে ঢুকুন</div>
+  <input id="li" class="nv" placeholder="আইডি" autocapitalize="off" autocomplete="off">
+  <input id="lp" class="nv" type="password" placeholder="পাসওয়ার্ড">
+  <button id="lb" class="nv" onclick="doLogin()">ঢুকুন</button>
+  <div id="er" class="er"></div>
+ </div>
+</div>
+
+<div id="v2" class="v">
+ <div class="hd" id="h2">চ্যাট</div>
+ <div class="bd" id="cl"><div class="em">লোড হচ্ছে…</div></div>
+</div>
+
+<div id="v3" class="v">
+ <div class="hd" id="h3"></div>
+ <div class="bd" id="ms" tabindex="0"></div>
+ <div id="inb"><input id="mi" placeholder="মেসেজ লিখুন" autocomplete="off"></div>
+</div>
+
+<div id="sk"><span class="l" id="sl" onclick="sk('l')"></span><span class="c" id="sc" onclick="sk('c')"></span><span class="r" id="sr" onclick="sk('r')"></span></div>
+
+<script>
+// ভাই চ্যাট লাইট — KaiOS ও পুরোনো ব্রাউজারের জন্য (শুধু লেখা, কোনো framework নেই)
+var API="AIzaSyAKQ52fQQpKV4ScAX7gMXFEGQAk3YKt1m0",PID="bhai-chat-76916";
+var DOC="projects/"+PID+"/databases/(default)/documents";
+var FS="https://firestore.googleapis.com/v1/"+DOC;
+var PUSH="https://bhai-push.miskat168453.workers.dev";
+var S={uid:null,tok:null,ref:null,exp:0,name:"",view:1,chats:[],cur:null,last:0,tm:null};
+
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function p2(n){return n<10?"0"+n:""+n}
+function hm(ts){var d=new Date(ts);return p2(d.getHours())+":"+p2(d.getMinutes())}
+function rid(){var c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",o="";for(var i=0;i<20;i++)o+=c.charAt(Math.floor(Math.random()*c.length));return o}
+
+function xhr(method,url,body,hdr,cb){
+ var x=new XMLHttpRequest();x.open(method,url,true);
+ for(var k in hdr)x.setRequestHeader(k,hdr[k]);
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText)}catch(e){}cb(x.status,j)};
+ x.onerror=function(){cb(0,null)};
+ x.timeout=20000;x.ontimeout=function(){cb(0,null)};
+ x.send(body)
+}
+function dv(v){
+ if(!v)return null;
+ if("stringValue" in v)return v.stringValue;
+ if("integerValue" in v)return parseInt(v.integerValue,10);
+ if("doubleValue" in v)return v.doubleValue;
+ if("booleanValue" in v)return v.booleanValue;
+ if("mapValue" in v)return dm(v.mapValue.fields||{});
+ if("arrayValue" in v)return (v.arrayValue.values||[]).map(dv);
+ return null
+}
+function dm(f){var o={};for(var k in f)o[k]=dv(f[k]);return o}
+function save(){try{localStorage.lite=JSON.stringify({uid:S.uid,ref:S.ref,name:S.name})}catch(e){}}
+
+function refresh(cb){
+ xhr("POST","https://securetoken.googleapis.com/v1/token?key="+API,"grant_type=refresh_token&refresh_token="+encodeURIComponent(S.ref),{"Content-Type":"application/x-www-form-urlencoded"},function(st,j){
+  if(st==200&&j&&j.id_token){S.tok=j.id_token;S.ref=j.refresh_token||S.ref;S.exp=Date.now()+3300000;save();cb(true)}else cb(false)
+ })
+}
+function api(method,url,body,cb){
+ var tried=false;
+ function go(){
+  xhr(method,url,body?JSON.stringify(body):null,{"Authorization":"Bearer "+S.tok,"Content-Type":"application/json"},function(st,j){
+   if(st==401&&!tried){tried=true;refresh(function(ok){if(ok)go();else logout()});return}
+   cb(st,j)
+  })
+ }
+ if(S.exp&&Date.now()>S.exp)refresh(function(ok){if(ok)go();else logout()});else go()
+}
+
+function emsg(j){
+ var m=j&&j.error&&j.error.message||"";
+ if(/INVALID|NOT_FOUND|PASSWORD/.test(m))return "আইডি বা পাসওয়ার্ড ভুল";
+ if(/TOO_MANY/.test(m))return "অনেকবার চেষ্টা, একটু পরে দিন";
+ return "ঢোকা যায়নি, নেট দেখুন"
+}
+function doLogin(){
+ var u=$("li").value.trim().toLowerCase().replace(/^@/,""),p=$("lp").value;
+ if(!/^[a-z0-9_]{3,20}$/.test(u)){$("er").textContent="সঠিক আইডি দিন";return}
+ $("er").textContent="অপেক্ষা করুন…";
+ xhr("POST","https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+API,JSON.stringify({email:u+"@vaichat.app",password:p,returnSecureToken:true}),{"Content-Type":"application/json"},function(st,j){
+  if(st==200&&j&&j.idToken){S.uid=j.localId;S.tok=j.idToken;S.ref=j.refreshToken;S.exp=Date.now()+3300000;$("lp").value="";loadMe()}
+  else $("er").textContent=emsg(j)
+ })
+}
+function loadMe(){
+ api("GET",FS+"/users/"+S.uid,null,function(st,j){
+  S.name=(j&&j.fields&&j.fields.name&&j.fields.name.stringValue)||"আমি";save();show(2)
+ })
+}
+function logout(){try{localStorage.removeItem("lite")}catch(e){}S.uid=S.tok=S.ref=null;clearInterval(S.tm);show(1)}
+
+// ---- চ্যাট তালিকা ----
+function loadChats(cb){
+ api("POST",FS+":runQuery",{structuredQuery:{from:[{collectionId:"chats"}],where:{fieldFilter:{field:{fieldPath:"members"},op:"ARRAY_CONTAINS",value:{stringValue:S.uid}}}}},function(st,j){
+  if(st!=200||!j){cb(false);return}
+  var a=[];
+  for(var i=0;i<j.length;i++){if(!j[i].document)continue;var d=j[i].document,c=dm(d.fields||{});c.id=d.name.split("/").pop();if(c.hid&&c.hid[S.uid])continue;a.push(c)}
+  a.sort(function(x,y){return (y.lastTs||0)-(x.lastTs||0)});
+  S.chats=a;cb(true)
+ })
+}
+function title(c){
+ if(c.isGroup)return "👥 "+(c.name||"গ্রুপ");
+ var o=(c.members||[]).filter(function(m){return m!=S.uid})[0],u=c.users&&c.users[o];
+ return (u&&u.name)||"চ্যাট"
+}
+function drawList(){
+ var h="";
+ for(var i=0;i<S.chats.length;i++){
+  var c=S.chats[i],n=c.unread&&c.unread[S.uid]||0;
+  h+='<div class="it nv" tabindex="0" data-i="'+i+'" onclick="openChat('+i+')"><b>'+esc(title(c))+(n?'<span class="un">'+n+'</span>':'')+'</b><small>'+esc(c.lastText||"")+'</small></div>'
+ }
+ $("cl").innerHTML=h||'<div class="em">কোনো চ্যাট নেই।<br>মূল অ্যাপ থেকে বন্ধু যোগ করুন।</div>';
+ $("h2").textContent="চ্যাট · "+S.name;
+ var f=document.querySelector("#v2 .nv");if(f&&S.view==2&&!document.querySelector("#v2 .nv:focus"))f.focus()
+}
+function pollList(){if(S.view!=2||document.hidden)return;loadChats(function(ok){if(ok&&S.view==2){var fi=document.activeElement&&document.activeElement.getAttribute("data-i");drawList();if(fi){var e=document.querySelector('#v2 [data-i="'+fi+'"]');if(e)e.focus()}}})}
+
+// ---- মেসেজ ----
+function mtext(m){
+ if(m.del)return "🚫 মেসেজ মুছে ফেলা হয়েছে";
+ var k=m.kind||"text";
+ if(k=="voice")return "🎤 ভয়েস মেসেজ ("+(m.dur||0)+" সে.)";
+ if(k=="img")return "📷 ছবি (লাইটে দেখা যায় না)";
+ if(k=="call")return "📞 "+(m.video?"ভিডিও":"ভয়েস")+" কল";
+ if(k=="poll")return "🗳️ ভোট: "+(m.q||"");
+ return m.text||""
+}
+function openChat(i){
+ var c=S.chats[i];if(!c)return;S.cur=c;S.last=0;
+ $("h3").textContent=title(c);$("ms").innerHTML='<div class="em">লোড হচ্ছে…</div>';
+ show(3);loadMsgs(true);markRead(c)
+}
+function loadMsgs(scroll){
+ var c=S.cur;if(!c)return;
+ api("POST",FS+"/chats/"+c.id+":runQuery",{structuredQuery:{from:[{collectionId:"messages"}],orderBy:[{field:{fieldPath:"ts"},direction:"DESCENDING"}],limit:30}},function(st,j){
+  if(S.cur!=c||st!=200||!j)return;
+  var a=[],clr=(c.clr&&c.clr[S.uid])||0;
+  for(var i=0;i<j.length;i++){if(!j[i].document)continue;var m=dm(j[i].document.fields||{});if(m.ts<=clr)continue;a.push(m)}
+  a.reverse();
+  var newest=a.length?a[a.length-1].ts:0;
+  if(newest==S.last&&!scroll)return;
+  var fresh=S.last&&newest>S.last&&a[a.length-1].from!=S.uid;
+  S.last=newest;
+  var h="";
+  for(var k=0;k<a.length;k++){
+   var m2=a[k],mine=m2.from==S.uid;
+   h+='<div class="m '+(mine?"me":"ot")+'">'+((c.isGroup&&!mine)?'<span class="sn">'+esc(m2.fn||"")+'</span>':"")+esc(mtext(m2))+'<small>'+hm(m2.ts)+'</small></div>'
+  }
+  var box=$("ms"),atEnd=box.scrollTop+box.clientHeight>=box.scrollHeight-30;
+  box.innerHTML=h||'<div class="em">এখনো কোনো মেসেজ নেই</div>';
+  if(scroll||atEnd||fresh)box.scrollTop=box.scrollHeight;
+  if(fresh){try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}markRead(c)}
+ })
+}
+function markRead(c){
+ var ts=Date.now(),u=S.uid,f={unread:{mapValue:{fields:{}}},seen:{mapValue:{fields:{}}}};
+ f.unread.mapValue.fields[u]={integerValue:"0"};f.seen.mapValue.fields[u]={integerValue:String(ts)};
+ api("POST","https://firestore.googleapis.com/v1/"+DOC+":commit",{writes:[{update:{name:DOC+"/chats/"+c.id,fields:f},updateMask:{fieldPaths:["unread."+u,"seen."+u]}}]},function(){})
+}
+function sendMsg(){
+ var c=S.cur,t=$("mi").value.trim();if(!c||!t)return;
+ $("mi").value="";
+ var ts=Date.now(),mid=rid(),u=S.uid,nm=S.name;
+ var up={lastText:{stringValue:t.slice(0,80)},lastTs:{integerValue:String(ts)},lastFrom:{stringValue:u},lastName:{stringValue:nm}};
+ var mask=["lastText","lastTs","lastFrom","lastName"],tr=[],ms=c.members||[];
+ for(var i=0;i<ms.length;i++){mask.push("hid."+ms[i]);if(ms[i]!=u)tr.push({fieldPath:"unread."+ms[i],increment:{integerValue:"1"}})}
+ var w2={update:{name:DOC+"/chats/"+c.id,fields:up},updateMask:{fieldPaths:mask}};if(tr.length)w2.updateTransforms=tr;
+ var w1={update:{name:DOC+"/chats/"+c.id+"/messages/"+mid,fields:{from:{stringValue:u},fn:{stringValue:nm},ts:{integerValue:String(ts)},kind:{stringValue:"text"},text:{stringValue:t}}},currentDocument:{exists:false}};
+ // আগে নিজের স্ক্রিনে দেখাই
+ var box=$("ms");if(box.firstChild&&box.firstChild.className=="em")box.innerHTML="";
+ box.insertAdjacentHTML("beforeend",'<div class="m me">'+esc(t)+'<small>'+hm(ts)+' ⏳</small></div>');box.scrollTop=box.scrollHeight;
+ api("POST","https://firestore.googleapis.com/v1/"+DOC+":commit",{writes:[w1,w2]},function(st){
+  if(st==200){
+   xhr("POST",PUSH,JSON.stringify({chat:c.id}),{"Authorization":"Bearer "+S.tok,"Content-Type":"application/json"},function(){});
+   S.last=0;loadMsgs(true)
+  }else{ $("er").textContent="";alert("মেসেজ যায়নি ("+st+")");loadMsgs(true) }
+ })
+}
+
+// ---- পর্দা ও কী ----
+function show(n){
+ S.view=n;for(var i=1;i<=3;i++)$("v"+i).style.display=(i==n?"flex":"none");
+ clearInterval(S.tm);
+ if(n==1){setSk("","ঢুকুন","");$("li").focus()}
+ if(n==2){setSk("রিফ্রেশ","খুলুন","লগআউট");S.cur=null;loadChats(function(ok){drawList()});S.tm=setInterval(pollList,8000)}
+ if(n==3){setSk("পাঠান","লিখুন","পেছনে");$("ms").focus();S.tm=setInterval(function(){if(!document.hidden)loadMsgs(false)},4000)}
+}
+function setSk(l,c,r){$("sl").textContent=l;$("sc").textContent=c;$("sr").textContent=r}
+function sk(w){
+ if(S.view==1){if(w=="c")doLogin()}
+ else if(S.view==2){
+  if(w=="l"){loadChats(function(){drawList()})}
+  else if(w=="c"){var a=document.activeElement;if(a&&a.className&&a.className.indexOf("it")>=0)a.click()}
+  else if(w=="r"){if(confirm("লগআউট করবেন?"))logout()}
+ }else if(S.view==3){
+  if(w=="l"){if($("mi").value.trim())sendMsg();else $("mi").focus()}
+  else if(w=="c"){$("mi").focus()}
+  else if(w=="r"){show(2)}
+ }
+}
+function mv(d){
+ var a=[].slice.call(document.querySelectorAll("#v"+S.view+" .nv")),i=a.indexOf(document.activeElement);
+ if(!a.length)return;
+ i=i<0?0:Math.max(0,Math.min(a.length-1,i+d));a[i].focus();
+ if(a[i].scrollIntoView)a[i].scrollIntoView(false)
+}
+document.addEventListener("keydown",function(e){
+ var k=e.key,inp=document.activeElement&&document.activeElement.tagName=="INPUT";
+ if(k=="SoftLeft"||k=="F1"){e.preventDefault();sk("l");return}
+ if(k=="SoftRight"||k=="F2"){e.preventDefault();sk("r");return}
+ if(S.view==3){
+  if(inp){
+   if(k=="Enter"){e.preventDefault();sendMsg()}
+   else if(k=="ArrowUp"){e.preventDefault();$("mi").blur();$("ms").focus()}
+   else if(k=="Escape"){$("mi").blur();$("ms").focus()}
+   return
+  }
+  if(k=="ArrowUp"){e.preventDefault();$("ms").scrollTop-=50}
+  else if(k=="ArrowDown"){e.preventDefault();$("ms").scrollTop+=50}
+  else if(k=="Enter"){e.preventDefault();$("mi").focus()}
+  else if(k=="Backspace"||k=="Escape"){e.preventDefault();show(2)}
+  return
+ }
+ if(k=="ArrowDown"){e.preventDefault();mv(1)}
+ else if(k=="ArrowUp"){e.preventDefault();mv(-1)}
+ else if(k=="Enter"&&!inp){var a=document.activeElement;if(a&&a.click&&a.tagName!="BODY"){e.preventDefault();a.click()}}
+ else if(k=="Enter"&&inp&&S.view==1){e.preventDefault();var x=document.activeElement.id=="li"?$("lp"):$("lb");x.focus();if(x.id=="lb"&&document.activeElement.id=="lb"){}}
+ else if((k=="Backspace"||k=="Escape")&&!inp&&S.view==2){e.preventDefault()}
+});
+(function(){
+ var s=null;try{s=JSON.parse(localStorage.lite||"null")}catch(e){}
+ if(s&&s.uid&&s.ref){S.uid=s.uid;S.ref=s.ref;S.name=s.name||"";show(1);$("er").textContent="চালু হচ্ছে…";refresh(function(ok){$("er").textContent="";if(ok)show(2)})}
+ else show(1)
+})();
+</script>
+</body></html>
